@@ -38,6 +38,7 @@ namespace BankWebAPI.Data
             catch (Exception ex)
             {
                 Console.WriteLine("Error: " + ex.Message);
+                return true;
             }
 
             return false; // Create table failed
@@ -48,28 +49,20 @@ namespace BankWebAPI.Data
         {
             try
             {
-                // Create a new SQLite connection
                 using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                 {
                     connection.Open();
 
-                    // Create a new SQLite command to execute SQL
                     using (SQLiteCommand command = connection.CreateCommand())
                     {
-                        // SQL command to insert data into the "AccountTable" table
-                        command.CommandText = @"
-                        INSERT INTO AccountTable (ID, Name, Balance)
-                        VALUES (@ID, @Name, @Balance)";
+                        command.CommandText = @"INSERT INTO AccountTable (ID, Name, Balance) VALUES (@ID, @Name, @Balance)";
 
-                        // Define parameters for the query
                         command.Parameters.AddWithValue("@ID", account.acctNo);
                         command.Parameters.AddWithValue("@Name", account.acctName);
-                        command.Parameters.AddWithValue("@Age", account.acctBal);
+                        command.Parameters.AddWithValue("@Balance", account.acctBal); // Corrected parameter name
 
-                        // Execute the SQL command to insert data
                         int rowsInserted = command.ExecuteNonQuery();
 
-                        // Check if any rows were inserted
                         connection.Close();
                         if (rowsInserted > 0)
                         {
@@ -210,6 +203,7 @@ namespace BankWebAPI.Data
         {
             if (CreateTable())
             {
+                Console.WriteLine("hello");
                 Account account = new Account();
                 account.acctNo = "123456789";
                 account.acctName = "Sajib";
