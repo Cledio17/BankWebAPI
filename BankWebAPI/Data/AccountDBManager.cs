@@ -38,7 +38,6 @@ namespace BankWebAPI.Data
             catch (Exception ex)
             {
                 Console.WriteLine("Error: " + ex.Message);
-                return true;
             }
 
             return false; // Create table failed
@@ -59,7 +58,7 @@ namespace BankWebAPI.Data
 
                         command.Parameters.AddWithValue("@ID", account.acctNo);
                         command.Parameters.AddWithValue("@Name", account.acctName);
-                        command.Parameters.AddWithValue("@Balance", account.acctBal); // Corrected parameter name
+                        command.Parameters.AddWithValue("@Balance", account.acctBal);
 
                         int rowsInserted = command.ExecuteNonQuery();
 
