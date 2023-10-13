@@ -26,7 +26,7 @@ namespace BankWebAPI.Data
                         Email TEXT,
                         PhoneNumber TEXT,
                         Address TEXT, 
-                        Pfp TEXT
+                        Pfp TEXT,   
                         ID TEXT
                     )";
 

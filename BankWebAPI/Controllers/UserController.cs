@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BankWebAPI.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class UserController : Controller
     {
         [HttpPost]
@@ -17,8 +17,8 @@ namespace BankWebAPI.Controllers
             }
             return BadRequest("Error in data insertion");
         }
-        [HttpGet]
-        [Route("{id}")]
+
+        [HttpGet("get/{id}")]
         public IActionResult Get(string id)
         {
             User user = UserDBManager.GetById(id);
@@ -26,28 +26,29 @@ namespace BankWebAPI.Controllers
             {
                 return NotFound();
             }
-            return Ok(user);
+            return new ObjectResult(user) { StatusCode = 200};
         }
-        [HttpDelete]
-        [Route("{id}")]
+
+        [HttpGet("deleteByName/{id}")]
         public IActionResult DeleteByUsername(string id)
         {
             if (UserDBManager.DeleteByUsername(id))
             {
-                return Ok("Successfully Deleted");
+                return Ok("User successfully deleted");
             }
-            return BadRequest("Could not delete");
+            return BadRequest("Could not delete user");
         }
-        [HttpDelete]
-        [Route("{id}")]
-        public IActionResult DeleteByEmail(string id)
+
+        [HttpGet("deleteByEmail/{email}")]
+        public IActionResult DeleteByEmail(string email)
         {
-            if (UserDBManager.DeleteByEmail(id))
+            if (UserDBManager.DeleteByEmail(email))
             {
                 return Ok("Successfully Deleted");
             }
             return BadRequest("Could not delete");
         }
+
         [HttpPut]
         public IActionResult Update(User user)
         {

@@ -202,7 +202,6 @@ namespace BankWebAPI.Data
         {
             if (CreateTable())
             {
-                Console.WriteLine("hello");
                 Account account = new Account();
                 account.acctNo = "123456789";
                 account.acctName = "Sajib";
@@ -220,7 +219,6 @@ namespace BankWebAPI.Data
                 account.acctName = "Ali";
                 account.acctBal = 915.70;
                 Insert(account);
-
             }
         }
     }
