@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BankWebAPI.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class AccountController : Controller
     {
         [HttpPost]

@@ -49,10 +49,10 @@ namespace BankWebAPI.Controllers
             return BadRequest("Could not delete");
         }
 
-        [HttpPut]
-        public IActionResult Update(User user)
+        [HttpPut("update/{id}")]
+        public IActionResult Update(string id, [FromBody] User user)
         {
-            if (UserDBManager.Update(user))
+            if (UserDBManager.Update(id, user.Password, user.Email, user.PhoneNumber, user.Address, user.pfp))
             {
                 return Ok("Successfully updated");
             }

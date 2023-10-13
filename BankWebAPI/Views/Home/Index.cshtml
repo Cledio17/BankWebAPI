@@ -93,35 +93,44 @@
         }
 
         function updateUser() {
-            var user = {
-                UserName: prompt("Enter Username:"),
-                Password: prompt("Enter Password:"),
-                Email: prompt("Enter Email:"),
-                PhoneNumber: prompt("Enter Phone Number:"),
-                Address: prompt("Enter Address:"),
-                pfp: prompt("Enter Pfp URL:"),
-                acctNo: prompt("Enter Account Number:")
-            };
+            var username = prompt("Enter Username:");
+            if (username !== null) {
+                var password = prompt("Enter Password:");
+                var email = prompt("Enter Email:");
+                var phoneNumber = prompt("Enter Phone Number:");
+                var address = prompt("Enter Address:");
+                var pfp = prompt("Enter Pfp URL:");
 
-            fetch('/api/User', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(user)
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.text();
+                var user = {
+                    UserName: username,
+                    Password: password,
+                    Email: email,
+                    PhoneNumber: phoneNumber,
+                    Address: address,
+                    pfp: pfp,
+                    acctNo: prompt("Enter Account Number:")
+                };
+
+                fetch(`/api/User/update/${username}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(user)
                 })
-                .then(message => {
-                    document.getElementById('result').innerHTML = message;
-                })
-                .catch(error => {
-                    document.getElementById('result').innerHTML = 'Error: ' + error.message;
-                });
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    })
+                    .then(message => {
+                        document.getElementById('result').innerHTML = message;
+                    })
+                    .catch(error => {
+                        document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                    });
+            }
         }
 
         function getAccountById() {
