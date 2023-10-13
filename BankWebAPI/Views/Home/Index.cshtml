@@ -174,8 +174,8 @@
         function createAccount() {
             var account = {
                 acctNo: prompt("Enter Account Number:"),
-                balance: parseFloat(prompt("Enter Balance:")),
-                holderName: prompt("Enter Holder Name:")
+                acctBal: prompt("Enter Balance:"),
+                acctName: prompt("Enter Holder Name:")
             };
 
             fetch('/api/Account', {
@@ -200,13 +200,18 @@
         }
 
         function updateAccount() {
-            var account = {
-                acctNo: prompt("Enter Account Number:"),
-                balance: parseFloat(prompt("Enter Balance:")),
-                holderName: prompt("Enter Holder Name:")
-            };
+            var acctNum = prompt("Enter Account Number:");
+            if (acctNum !== null) { 
+                var acctBalance = prompt("Enter Balance:");
+                var acctname  = prompt("Enter Holder Name:");
 
-            fetch('/api/Account', {
+                var account = {
+                    acctNo: acctNum,
+                    acctBal: acctBalance,
+                    acctName: acctname
+                };
+            };
+            fetch(`/api/Account/update/${acctNum}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'

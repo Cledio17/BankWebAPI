@@ -117,7 +117,7 @@ namespace BankWebAPI.Data
             }
         }
 
-        public static bool Update(Account account)
+        public static bool Update(String id, String acctName, double acctBal)
         {
             try
             {
@@ -131,9 +131,9 @@ namespace BankWebAPI.Data
                     {
                         // Build the SQL command to update data by ID
                         command.CommandText = $"UPDATE AccountTable SET Name = @Name, Balance = @Balance WHERE ID = @ID";
-                        command.Parameters.AddWithValue("@Name", account.acctName);
-                        command.Parameters.AddWithValue("@Balance", account.acctBal);
-                        command.Parameters.AddWithValue("@ID", account.acctNo);
+                        command.Parameters.AddWithValue("@Name", acctName);
+                        command.Parameters.AddWithValue("@Balance", acctBal);
+                        command.Parameters.AddWithValue("@ID", id);
 
                         // Execute the SQL command to update data
                         int rowsUpdated = command.ExecuteNonQuery();
