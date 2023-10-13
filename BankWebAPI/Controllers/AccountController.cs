@@ -17,8 +17,7 @@ namespace BankWebAPI.Controllers
             }
             return BadRequest("Error in data insertion");
         }
-        [HttpGet]
-        [Route("{id}")]
+        [HttpGet("get/{id}")]
         public IActionResult Get(string id)
         {
             Account account = AccountDBManager.GetById(id);
@@ -28,8 +27,7 @@ namespace BankWebAPI.Controllers
             }
             return Ok(account);
         }
-        [HttpDelete]
-        [Route("{id}")]
+        [HttpGet("delete/{id}")]
         public IActionResult Delete(string id)
         {
             if (AccountDBManager.Delete(id))

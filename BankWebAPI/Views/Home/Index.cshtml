@@ -1,8 +1,293 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Bank API Interface</title>
+    <script>
+        function getUserById() {
+            var userId = prompt("Enter User ID:");
+            if (userId !== null) {
+                fetch(`/api/User/get/${userId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        document.getElementById('result').innerHTML = JSON.stringify(data);
+                    })
+                    .catch(error => {
+                        document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                    });
+            }
+        }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+        function deleteUserByUsername() {
+            var username = prompt("Enter Username:");
+            if (username !== null) {
+                fetch(`/api/User/deleteByName/${username}`, { method: 'GET' })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    })
+                    .then(message => {
+                        document.getElementById('result').innerHTML = message;
+                    })
+                    .catch(error => {
+                        document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                    });
+            }
+        }
+
+        function deleteUserByEmail() {
+            var email = prompt("Enter Email:");
+            if (email !== null) {
+                fetch(`/api/User/deleteByEmail/${email}`, { method: 'GET' })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    })
+                    .then(message => {
+                        document.getElementById('result').innerHTML = message;
+                    })
+                    .catch(error => {
+                        document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                    });
+            }
+        }
+
+        function createUser() {
+            var user = {
+                UserName: prompt("Enter Username:"),
+                Password: prompt("Enter Password:"),
+                Email: prompt("Enter Email:"),
+                PhoneNumber: prompt("Enter Phone Number:"),
+                Address: prompt("Enter Address:"),
+                pfp: prompt("Enter Pfp URL:"),
+                acctNo: prompt("Enter Account Number:")
+            };
+
+            fetch('/api/User', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(message => {
+                    document.getElementById('result').innerHTML = message;
+                })
+                .catch(error => {
+                    document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                });
+        }
+
+        function updateUser() {
+            var user = {
+                UserName: prompt("Enter Username:"),
+                Password: prompt("Enter Password:"),
+                Email: prompt("Enter Email:"),
+                PhoneNumber: prompt("Enter Phone Number:"),
+                Address: prompt("Enter Address:"),
+                pfp: prompt("Enter Pfp URL:"),
+                acctNo: prompt("Enter Account Number:")
+            };
+
+            fetch('/api/User', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(message => {
+                    document.getElementById('result').innerHTML = message;
+                })
+                .catch(error => {
+                    document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                });
+        }
+
+        function getAccountById() {
+            var accountId = prompt("Enter Account ID:");
+            if (accountId !== null) {
+                fetch(`/api/Account/get/${accountId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        document.getElementById('result').innerHTML = JSON.stringify(data);
+                    })
+                    .catch(error => {
+                        document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                    });
+            }
+        }
+
+        function deleteAccount() {
+            var accountId = prompt("Enter Account ID:");
+            if (accountId !== null) {
+                fetch(`/api/Account/delete/${accountId}`, { method: 'GET' })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    })
+                    .then(message => {
+                        document.getElementById('result').innerHTML = message;
+                    })
+                    .catch(error => {
+                        document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                    });
+            }
+        }
+
+        function createAccount() {
+            var account = {
+                acctNo: prompt("Enter Account Number:"),
+                balance: parseFloat(prompt("Enter Balance:")),
+                holderName: prompt("Enter Holder Name:")
+            };
+
+            fetch('/api/Account', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(account)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(message => {
+                    document.getElementById('result').innerHTML = message;
+                })
+                .catch(error => {
+                    document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                });
+        }
+
+        function updateAccount() {
+            var account = {
+                acctNo: prompt("Enter Account Number:"),
+                balance: parseFloat(prompt("Enter Balance:")),
+                holderName: prompt("Enter Holder Name:")
+            };
+
+            fetch('/api/Account', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(account)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(message => {
+                    document.getElementById('result').innerHTML = message;
+                })
+                .catch(error => {
+                    document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                });
+        }
+
+        function getTransactionById() {
+            var transactionId = prompt("Enter Transaction ID:");
+            if (transactionId !== null) {
+                fetch(`/api/Transaction/${transactionId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        document.getElementById('result').innerHTML = JSON.stringify(data);
+                    })
+                    .catch(error => {
+                        document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                    });
+            }
+        }
+
+        function createTransaction() {
+            var transaction = {
+                transactionId: prompt("Enter Transaction ID:"),
+                fromId: prompt("Enter Source Account ID:"),
+                toId: prompt("Enter Destination Account ID:"),
+                amount: parseFloat(prompt("Enter Amount:"))
+            };
+
+            fetch('/api/Transaction', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(transaction)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(message => {
+                    document.getElementById('result').innerHTML = message;
+                })
+                .catch(error => {
+                    document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                });
+        }
+    </script>
+</head>
+<body>
+    <h1>Bank API Interface</h1>
+
+    <h2>User Controller</h2>
+    <button onclick="getUserById()">Get User by UserName</button>
+    <button onclick="deleteUserByUsername()">Delete User by Username</button>
+    <button onclick="deleteUserByEmail()">Delete User by Email</button>
+    <button onclick="createUser()">Create User</button>
+    <button onclick="updateUser()">Update User</button>
+
+    <h2>Account Controller</h2>
+    <button onclick="getAccountById()">Get Account by ID</button>
+    <button onclick="deleteAccount()">Delete Account</button>
+    <button onclick="createAccount()">Create Account</button>
+    <button onclick="updateAccount()">Update Account</button>
+
+    <h2>Transaction Controller</h2>
+    <button onclick="getTransactionById()">Get Transaction by ID</button>
+    <button onclick="createTransaction()">Create Transaction</button>
+
+    <h4>Result:</h4>
+    <div id="result"> </div>
+</body>
+</html>
