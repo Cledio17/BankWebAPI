@@ -15,6 +15,14 @@
                     })
                     .then(data => {
                         document.getElementById('result').innerHTML = JSON.stringify(data);
+
+                        if (data.pfp) {
+                            var imgElement = document.createElement('img');
+                            imgElement.src = data.pfp; 
+                            imgElement.alt = 'Profile Picture';
+                            imgElement.style.width = '100px';
+                            document.getElementById('profilePicture').appendChild(imgElement);
+                        }
                     })
                     .catch(error => {
                         document.getElementById('result').innerHTML = 'Error: ' + error.message;
@@ -93,35 +101,44 @@
         }
 
         function updateUser() {
-            var user = {
-                UserName: prompt("Enter Username:"),
-                Password: prompt("Enter Password:"),
-                Email: prompt("Enter Email:"),
-                PhoneNumber: prompt("Enter Phone Number:"),
-                Address: prompt("Enter Address:"),
-                pfp: prompt("Enter Pfp URL:"),
-                acctNo: prompt("Enter Account Number:")
-            };
+            var username = prompt("Enter Username:");
+            if (username !== null) {
+                var password = prompt("Enter Password:");
+                var email = prompt("Enter Email:");
+                var phoneNumber = prompt("Enter Phone Number:");
+                var address = prompt("Enter Address:");
+                var pfp = prompt("Enter Pfp URL:");
 
-            fetch('/api/User', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(user)
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.text();
+                var user = {
+                    UserName: username,
+                    Password: password,
+                    Email: email,
+                    PhoneNumber: phoneNumber,
+                    Address: address,
+                    pfp: pfp,
+                    acctNo: prompt("Enter Account Number:")
+                };
+
+                fetch(`/api/User/update/${username}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(user)
                 })
-                .then(message => {
-                    document.getElementById('result').innerHTML = message;
-                })
-                .catch(error => {
-                    document.getElementById('result').innerHTML = 'Error: ' + error.message;
-                });
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    })
+                    .then(message => {
+                        document.getElementById('result').innerHTML = message;
+                    })
+                    .catch(error => {
+                        document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                    });
+            }
         }
 
         function getAccountById() {
@@ -165,8 +182,8 @@
         function createAccount() {
             var account = {
                 acctNo: prompt("Enter Account Number:"),
-                balance: parseFloat(prompt("Enter Balance:")),
-                holderName: prompt("Enter Holder Name:")
+                acctBal: prompt("Enter Balance:"),
+                acctName: prompt("Enter Holder Name:")
             };
 
             fetch('/api/Account', {
@@ -191,13 +208,18 @@
         }
 
         function updateAccount() {
-            var account = {
-                acctNo: prompt("Enter Account Number:"),
-                balance: parseFloat(prompt("Enter Balance:")),
-                holderName: prompt("Enter Holder Name:")
-            };
+            var acctNum = prompt("Enter Account Number:");
+            if (acctNum !== null) { 
+                var acctBalance = prompt("Enter Balance:");
+                var acctname  = prompt("Enter Holder Name:");
 
-            fetch('/api/Account', {
+                var account = {
+                    acctNo: acctNum,
+                    acctBal: acctBalance,
+                    acctName: acctname
+                };
+            };
+            fetch(`/api/Account/update/${acctNum}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -224,7 +246,7 @@
                 fetch(`/api/Transaction/${transactionId}`)
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Network response was not ok');
+                            throw new Error('Network response was not ok. Some errors have occured.');
                         }
                         return response.json();
                     })
@@ -239,10 +261,10 @@
 
         function createTransaction() {
             var transaction = {
-                transactionId: prompt("Enter Transaction ID:"),
+                transId: '12345',
                 fromId: prompt("Enter Source Account ID:"),
                 toId: prompt("Enter Destination Account ID:"),
-                amount: parseFloat(prompt("Enter Amount:"))
+                bal: prompt("Enter Amount:")
             };
 
             fetch('/api/Transaction', {
@@ -254,7 +276,7 @@
             })
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        throw new Error('Network response was not ok. Some errors have occured.');
                     }
                     return response.text();
                 })
@@ -288,6 +310,7 @@
     <button onclick="createTransaction()">Create Transaction</button>
 
     <h4>Result:</h4>
+    <div id="profilePicture"></div>
     <div id="result"> </div>
 </body>
 </html>
