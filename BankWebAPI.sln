@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankWebAPI", "BankWebAPI\BankWebAPI.csproj", "{268FAB93-5BF2-4AE4-9701-03781F547D41}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankWebAPI", "BankWebAPI\BankWebAPI.csproj", "{268FAB93-5BF2-4AE4-9701-03781F547D41}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankWebAPI_JS", "BankWebAPI_JS\BankWebAPI_JS.csproj", "{A3D4797A-9CBC-4F69-B1C9-B394A88265EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{268FAB93-5BF2-4AE4-9701-03781F547D41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{268FAB93-5BF2-4AE4-9701-03781F547D41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{268FAB93-5BF2-4AE4-9701-03781F547D41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3D4797A-9CBC-4F69-B1C9-B394A88265EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3D4797A-9CBC-4F69-B1C9-B394A88265EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3D4797A-9CBC-4F69-B1C9-B394A88265EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3D4797A-9CBC-4F69-B1C9-B394A88265EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
