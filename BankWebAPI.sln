@@ -5,7 +5,9 @@ VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankWebAPI", "BankWebAPI\BankWebAPI.csproj", "{268FAB93-5BF2-4AE4-9701-03781F547D41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankWebAPI_JS", "BankWebAPI_JS\BankWebAPI_JS.csproj", "{A3D4797A-9CBC-4F69-B1C9-B394A88265EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankWebAPI_JS", "BankWebAPI_JS\BankWebAPI_JS.csproj", "{A3D4797A-9CBC-4F69-B1C9-B394A88265EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankWebAPI_Admin", "BankWebAPI_Admin\BankWebAPI_Admin.csproj", "{D9FFF319-E727-4FE1-98FF-B12E4551B569}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{A3D4797A-9CBC-4F69-B1C9-B394A88265EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3D4797A-9CBC-4F69-B1C9-B394A88265EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3D4797A-9CBC-4F69-B1C9-B394A88265EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9FFF319-E727-4FE1-98FF-B12E4551B569}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9FFF319-E727-4FE1-98FF-B12E4551B569}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9FFF319-E727-4FE1-98FF-B12E4551B569}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9FFF319-E727-4FE1-98FF-B12E4551B569}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

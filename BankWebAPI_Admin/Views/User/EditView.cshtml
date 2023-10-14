@@ -1,0 +1,19 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div id="EditForm">
+        <input type="text" id="SAccountNumber" name="SUaccnumber" placeholder="Account Number" />
+        <input type="text" id="SName" name="SUname" placeholder="User Name" />
+        <input type="password" id="SPass" name="SPassword" placeholder="Password" />
+        <input type="text" id="SEmail" name="SUEmail" placeholder="Email" />
+        <input type="text" id="SPhone" name="SUPhone" placeholder="Phone Number" />
+        <button type="button" id="EditButton" onclick="performEdit()">Edit</button>
+
+</div>
+
+<div id="DeactiveForm">
+        <input type="text" id="SDeactiveName" name="SUdeactivename" placeholder="Enter User Name" />
+        <button type="button" id="DeactiveButton" onclick="performDeactive()">Deactive</button>
+</div>
