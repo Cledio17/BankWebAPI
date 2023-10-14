@@ -6,7 +6,7 @@ namespace BankWebAPI.Data
 {
     public class AccountDBManager
     {
-        private static string connectionString = "Data Source=accountdatabase.db;Version=3;";
+        private static string connectionString = "Data Source=bankdatabase.db;Version=3;";
 
         public static bool CreateTable()
         {

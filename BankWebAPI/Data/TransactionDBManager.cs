@@ -5,7 +5,7 @@ namespace BankWebAPI.Data
 {
     public class TransactionDBManager
     {
-        private static string connectionString = "Data Source=accountdatabase.db;Version=3;";
+        private static string connectionString = "Data Source=bankdatabase.db;Version=3;";
 
         public static bool CreateTable()
         {
@@ -44,6 +44,42 @@ namespace BankWebAPI.Data
 
         }
 
+        //public static bool Insert(Transaction transaction)
+        //{
+        //    try
+        //    {
+        //        using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+        //        {
+        //            connection.Open();
+
+        //            using (SQLiteCommand command = connection.CreateCommand())
+        //            {
+
+        //                command.CommandText = @"INSERT INTO TransactionTable (TransactionId, FromId, ToId, Balance) VALUES (@TransactionId, @FromId, @ToId, @Balance)";
+
+        //                command.Parameters.AddWithValue("@TransactionId", transaction.transId);
+        //                command.Parameters.AddWithValue("@FromId", transaction.fromId);
+        //                command.Parameters.AddWithValue("@ToId", transaction.toId);
+        //                command.Parameters.AddWithValue("@Balance", transaction.bal);
+
+        //                int rowsInserted = command.ExecuteNonQuery();
+
+        //                connection.Close();
+        //                if (rowsInserted > 0)
+        //                {
+        //                    return true; // Insertion was successful
+        //                }
+        //            }
+        //            connection.Close();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine("Error: " + ex.Message);
+        //    }
+
+        //    return false; // Insertion failed
+        //}
         public static bool Insert(Transaction transaction)
         {
             try
@@ -52,21 +88,26 @@ namespace BankWebAPI.Data
                 {
                     connection.Open();
 
-                    using (SQLiteCommand command = connection.CreateCommand())
+                    using (SQLiteCommand countCommand = connection.CreateCommand())
                     {
-                        command.CommandText = @"INSERT INTO TransactionTable (TransactionId, FromId, ToId, Balance) VALUES (@TransactionId, @FromId, @ToId, @Balance)";
-
-                        command.Parameters.AddWithValue("@TransactionId", transaction.transId);
-                        command.Parameters.AddWithValue("@FromId", transaction.fromId);
-                        command.Parameters.AddWithValue("@ToId", transaction.toId);
-                        command.Parameters.AddWithValue("@Balance", transaction.bal);
-
-                        int rowsInserted = command.ExecuteNonQuery();
-
-                        connection.Close();
-                        if (rowsInserted > 0)
+                        countCommand.CommandText = "SELECT COUNT(*) FROM TransactionTable";
+                        int transactionCount = Convert.ToInt32(countCommand.ExecuteScalar());
+                        using (SQLiteCommand insertCommand = connection.CreateCommand())
                         {
-                            return true; // Insertion was successful
+                            insertCommand.CommandText = @"INSERT INTO TransactionTable (TransactionId, FromId, ToId, Balance) VALUES (@TransactionId, @FromId, @ToId, @Balance)";
+
+                            insertCommand.Parameters.AddWithValue("@TransactionId", transactionCount + 1); // Use transactionCount + 1 as the new TransactionId
+                            insertCommand.Parameters.AddWithValue("@FromId", transaction.fromId);
+                            insertCommand.Parameters.AddWithValue("@ToId", transaction.toId);
+                            insertCommand.Parameters.AddWithValue("@Balance", transaction.bal);
+
+                            int rowsInserted = insertCommand.ExecuteNonQuery();
+
+                            if (rowsInserted > 0)
+                            {
+                                connection.Close();
+                                return true; // Insertion was successful
+                            }
                         }
                     }
                     connection.Close();
@@ -79,6 +120,7 @@ namespace BankWebAPI.Data
 
             return false; // Insertion failed
         }
+
 
         public static bool Update(Transaction transaction, Account acc, Account acc2)
         {

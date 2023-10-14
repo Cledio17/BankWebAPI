@@ -5,7 +5,7 @@ namespace BankWebAPI.Data
 {
     public class UserDBManager
     {
-        private static string connectionString = "Data Source=accountdatabase.db;Version=3;";
+        private static string connectionString = "Data Source=bankdatabase.db;Version=3;";
 
         public static bool CreateTable()
         {
@@ -259,7 +259,7 @@ namespace BankWebAPI.Data
                 user.Email = "clement17@gmail.com";
                 user.PhoneNumber = "0123456789";
                 user.Address = "Lakeside 01";
-                user.pfp = "C:\\Users\\User\\source\\repos\\BankWebAPI\\captainamerica.jpg";
+                user.pfp = "/image/img1.png";
                 user.acctNo = "123456789";
                 Insert(user);
 
@@ -269,7 +269,7 @@ namespace BankWebAPI.Data
                 user.Email = "kungsoon22@gmail.com";
                 user.PhoneNumber = "0123456788";
                 user.Address = "Lakeside 02";
-                user.pfp = "C:\\Users\\User\\source\\repos\\BankWebAPI\\thor.jpg";
+                user.pfp = "/image/img2.jpg";
                 user.acctNo = "123456788";
                 Insert(user);
 
@@ -279,7 +279,7 @@ namespace BankWebAPI.Data
                 user.Email = "lusheng15@gmail.com";
                 user.PhoneNumber = "0123456787";
                 user.Address = "Lakeside 03";
-                user.pfp = "C:\\Users\\User\\source\\repos\\BankWebAPI\\ironman.jpg";
+                user.pfp = "/image/img3.jpg";
                 user.acctNo = "123456787";
                 Insert(user);
 
