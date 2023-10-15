@@ -26,7 +26,7 @@ namespace BankWebAPI_JS.Controllers
             {
                 return NotFound();
             }
-            return new ObjectResult(user) { StatusCode = 200};
+            return new ObjectResult(user) { StatusCode = 200 };
         }
 
         [HttpGet("deleteByName/{id}")]
@@ -49,10 +49,10 @@ namespace BankWebAPI_JS.Controllers
             return BadRequest("Could not delete");
         }
 
-        [HttpPut]
-        public IActionResult Update(User user)
+        [HttpPut("update/{id}")]
+        public IActionResult Update(string id, [FromBody] User user)
         {
-            if (UserDBManager.Update(user))
+            if (UserDBManager.Update(id, user.Password, user.Email, user.PhoneNumber, user.Address, user.pfp))
             {
                 return Ok("Successfully updated");
             }

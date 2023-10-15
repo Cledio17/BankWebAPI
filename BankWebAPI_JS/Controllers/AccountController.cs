@@ -1,11 +1,11 @@
-﻿using BankWebAPI_JS .Data;
+﻿using BankWebAPI_JS.Data;
 using BankWebAPI_JS.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BankWebAPI_JS.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class AccountController : Controller
     {
         [HttpGet("view")]
@@ -41,10 +41,10 @@ namespace BankWebAPI_JS.Controllers
             }
             return BadRequest("Could not delete");
         }
-        [HttpPut]
-        public IActionResult Update(Account account)
+        [HttpPut("update/{id}")]
+        public IActionResult Update(string id, [FromBody] Account account)
         {
-            if (AccountDBManager.Update(account))
+            if (AccountDBManager.Update(id, account.acctName, account.acctBal))
             {
                 return Ok("Successfully updated");
             }

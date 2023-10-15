@@ -5,7 +5,7 @@ namespace BankWebAPI_JS.Data
 {
     public class UserDBManager
     {
-        private static string connectionString = "Data Source=accountdatabase.db;Version=3;";
+        private static string connectionString = "Data Source=bankdatabase.db;Version=3;";
 
         public static bool CreateTable()
         {
@@ -162,7 +162,7 @@ namespace BankWebAPI_JS.Data
             }
         }
 
-        public static bool Update(User user)
+        public static bool Update(String id, String password, String email, String phoneNumber, string address, string pfp)
         {
             try
             {
@@ -175,13 +175,13 @@ namespace BankWebAPI_JS.Data
                     using (SQLiteCommand command = connection.CreateCommand())
                     {
                         // Build the SQL command to update data by ID
-                        command.CommandText = $"UPDATE UserTable SET Name = @Name, Balance = @Balance WHERE Username = @Username";
-                        command.Parameters.AddWithValue("@Username", user.UserName);
-                        command.Parameters.AddWithValue("@Password", user.Password);
-                        command.Parameters.AddWithValue("@Email", user.Email);
-                        command.Parameters.AddWithValue("@PhoneNumber", user.PhoneNumber);
-                        command.Parameters.AddWithValue("@Address", user.Address);
-                        command.Parameters.AddWithValue("@Pfp", user.pfp);
+                        command.CommandText = $"UPDATE UserTable SET Password = @Password, Email = @Email, PhoneNumber = @PhoneNumber, Address = @Address, Pfp = @Pfp WHERE Username = @Username";
+                        command.Parameters.AddWithValue("@Username", id);
+                        command.Parameters.AddWithValue("@Password", password);
+                        command.Parameters.AddWithValue("@Email", email);
+                        command.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
+                        command.Parameters.AddWithValue("@Address", address);
+                        command.Parameters.AddWithValue("@Pfp", pfp);
 
                         // Execute the SQL command to update data
                         int rowsUpdated = command.ExecuteNonQuery();
@@ -259,7 +259,7 @@ namespace BankWebAPI_JS.Data
                 user.Email = "clement17@gmail.com";
                 user.PhoneNumber = "0123456789";
                 user.Address = "Lakeside 01";
-                user.pfp = "C:\\Users\\User\\source\\repos\\BankWebAPI\\captainamerica.jpg";
+                user.pfp = "/image/img1.png";
                 user.acctNo = "123456789";
                 Insert(user);
 
@@ -269,7 +269,7 @@ namespace BankWebAPI_JS.Data
                 user.Email = "kungsoon22@gmail.com";
                 user.PhoneNumber = "0123456788";
                 user.Address = "Lakeside 02";
-                user.pfp = "C:\\Users\\User\\source\\repos\\BankWebAPI\\thor.jpg";
+                user.pfp = "/image/img2.jpg";
                 user.acctNo = "123456788";
                 Insert(user);
 
@@ -279,7 +279,7 @@ namespace BankWebAPI_JS.Data
                 user.Email = "lusheng15@gmail.com";
                 user.PhoneNumber = "0123456787";
                 user.Address = "Lakeside 03";
-                user.pfp = "C:\\Users\\User\\source\\repos\\BankWebAPI\\ironman.jpg";
+                user.pfp = "/image/img3.jpg";
                 user.acctNo = "123456787";
                 Insert(user);
 

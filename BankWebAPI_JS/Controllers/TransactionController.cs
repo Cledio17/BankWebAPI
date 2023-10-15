@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BankWebAPI_JS.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class TransactionController : Controller
     {
         [HttpGet("view")]
@@ -16,12 +16,15 @@ namespace BankWebAPI_JS.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Transaction transaction)
         {
-            if (TransactionDBManager.Insert(transaction))
+            Account account = AccountDBManager.GetById(transaction.fromId);
+            Account account2 = AccountDBManager.GetById(transaction.toId);
+            if (account != null && account2 != null)
             {
-                Account account = AccountDBManager.GetById(transaction.fromId);
-                Account account2 = AccountDBManager.GetById(transaction.toId);
-                TransactionDBManager.Update(transaction, account, account2);
-                return Ok("Successfully inserted");
+                if (TransactionDBManager.Insert(transaction))
+                {
+                    TransactionDBManager.Update(transaction, account, account2);
+                    return Ok("Successfully inserted");
+                }
             }
             return BadRequest("Error in data insertion");
         }
