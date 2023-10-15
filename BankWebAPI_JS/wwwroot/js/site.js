@@ -17,8 +17,10 @@ function loadView(status) {
         apiUrl = '/api/information/view';
         getUserDatas();
     }
-    if (status === "account")
+    if (status === "account") {
         apiUrl = '/api/account/view';
+        getAccBalance();
+    }
     if (status === "transaction")
         apiUrl = '/api/transaction/view';
     if (status === "transfer")
@@ -102,6 +104,26 @@ function performAuth() {
             console.error('Fetch error:', error);
         });
 
+}
+
+function getAccBalance(){
+    var sessionId = getCookie("SessionID");
+    if (!sessionId) {
+        return;
+    }
+
+    $.ajax({
+        url: '/api/Account/get/' + + sessionId, // Replace '123' with the actual account number
+        type: 'GET',
+        success: function (data) {
+            // Assuming the returned data is in JSON format
+            $('#AcctNo').val(data.acctNo);
+            $('#AcctBal').val(data.acctBal);
+        },
+        error: function () {
+            alert('User not found');
+        }
+    });
 }
 
 function getUserDatas() {

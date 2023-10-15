@@ -20,12 +20,15 @@ namespace BankWebAPI_JS.Data
                     {
                         // SQL command to create a table named "AccountTable"
                         command.CommandText = @"
-                    CREATE TABLE TransactionTable (
-                        TransactionId TEXT,
-                        FromId TEXT,
-                        ToId TEXT,
-                        Balance REAL
-                    )";
+                            CREATE TABLE TransactionTable (
+                                TransactionId TEXT,
+                                FromId TEXT,
+                                ToId TEXT,
+                                Balance REAL,
+                                TransactionDate DATETIME,
+                                Description TEXT
+                            )";
+
 
                         // Execute the SQL command to create the table
                         command.ExecuteNonQuery();
@@ -44,42 +47,6 @@ namespace BankWebAPI_JS.Data
 
         }
 
-        //public static bool Insert(Transaction transaction)
-        //{
-        //    try
-        //    {
-        //        using (SQLiteConnection connection = new SQLiteConnection(connectionString))
-        //        {
-        //            connection.Open();
-
-        //            using (SQLiteCommand command = connection.CreateCommand())
-        //            {
-
-        //                command.CommandText = @"INSERT INTO TransactionTable (TransactionId, FromId, ToId, Balance) VALUES (@TransactionId, @FromId, @ToId, @Balance)";
-
-        //                command.Parameters.AddWithValue("@TransactionId", transaction.transId);
-        //                command.Parameters.AddWithValue("@FromId", transaction.fromId);
-        //                command.Parameters.AddWithValue("@ToId", transaction.toId);
-        //                command.Parameters.AddWithValue("@Balance", transaction.bal);
-
-        //                int rowsInserted = command.ExecuteNonQuery();
-
-        //                connection.Close();
-        //                if (rowsInserted > 0)
-        //                {
-        //                    return true; // Insertion was successful
-        //                }
-        //            }
-        //            connection.Close();
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine("Error: " + ex.Message);
-        //    }
-
-        //    return false; // Insertion failed
-        //}
         public static bool Insert(Transaction transaction)
         {
             try
@@ -100,6 +67,8 @@ namespace BankWebAPI_JS.Data
                             insertCommand.Parameters.AddWithValue("@FromId", transaction.fromId);
                             insertCommand.Parameters.AddWithValue("@ToId", transaction.toId);
                             insertCommand.Parameters.AddWithValue("@Balance", transaction.bal);
+                            insertCommand.Parameters.AddWithValue("@TransactionDate", transaction.transactionDate);
+                            insertCommand.Parameters.AddWithValue("@Description", transaction.description);
 
                             int rowsInserted = insertCommand.ExecuteNonQuery();
 
@@ -120,7 +89,6 @@ namespace BankWebAPI_JS.Data
 
             return false; // Insertion failed
         }
-
 
         public static bool Update(Transaction transaction, Account acc, Account acc2)
         {
@@ -229,6 +197,8 @@ namespace BankWebAPI_JS.Data
                                 transaction.fromId = reader["FromId"].ToString();
                                 transaction.toId = reader["ToId"].ToString();
                                 transaction.bal = Convert.ToDouble(reader["Balance"]);
+                                transaction.transactionDate = Convert.ToDateTime(reader["TransactionDate"]);
+                                transaction.description = reader["Description"].ToString();
                             }
                         }
                     }
