@@ -19,8 +19,10 @@ function loadView(status) {
     }
     if (status === "account")
         apiUrl = '/api/account/view';
-    if (status === "transaction")
+    if (status === "transaction") { 
         apiUrl = '/api/transaction/view';
+        getTransactionByFromId();
+    }
     if (status === "transfer")
         apiUrl = '/api/transfer/view';
 
@@ -122,6 +124,38 @@ function getUserDatas() {
         },
         error: function () {
             alert('User not found');
+        }
+    });
+}
+
+function getTransactionByFromId() {
+    var sessionId = getCookie("SessionID");
+    if (!sessionId) {
+        return;
+    }
+
+    $.ajax({
+        url: '/api/Transaction/getbyfromid/' + + sessionId, // Replace '123' with the actual account number
+        type: 'GET',
+        success: function (data) {
+            // Assuming the returned data is an array of transactions
+            var tableBody = $("#transactionTableBody");
+            tableBody.empty(); // Clear existing rows
+
+            data.forEach(function (transaction) {
+                var row = "<tr>" +
+                    "<td>" + transaction.transId + "</td>" +
+                    "<td>" + transaction.fromId + "</td>" +
+                    "<td>" + transaction.toId + "</td>" +
+                    "<td>" + transaction.bal + "</td>" +
+                    "<td>" + "Hello" + "</td>" +
+                    "<td>" + "12/12/2002" + "</td>" +
+                    "</tr>";
+                tableBody.append(row);
+            });
+        },
+        error: function () {
+            alert('Error fetching transaction data');
         }
     });
 }

@@ -7,7 +7,7 @@ builder.Services.AddControllersWithViews();
 
 AccountDBManager.DBInitialize();
 UserDBManager.DBInitialize();
-TransactionDBManager.CreateTable();
+TransactionDBManager.DBInitialize();
 
 var app = builder.Build();
 

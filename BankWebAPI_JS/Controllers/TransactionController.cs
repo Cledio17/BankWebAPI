@@ -39,5 +39,16 @@ namespace BankWebAPI_JS.Controllers
             }
             return Ok(transaction);
         }
+        [HttpGet]
+        [Route("getbyfromid/{id}")]
+        public IActionResult GetByFromId(string id)
+        {
+            List<Transaction> transactions = TransactionDBManager.GetByFromId(id);
+            if (transactions == null)
+            {
+                return NotFound();
+            }
+            return Ok(transactions);
+        }
     }
 }
