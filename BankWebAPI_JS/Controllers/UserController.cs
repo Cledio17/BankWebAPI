@@ -29,6 +29,17 @@ namespace BankWebAPI_JS.Controllers
             return new ObjectResult(user) { StatusCode = 200 };
         }
 
+        [HttpGet("get/{accountNumber}")]
+        public IActionResult GetByAccNo(string id) 
+        {
+            User user = UserDBManager.GetByAccNo(id);
+            if(user == null) 
+            { 
+                return NotFound();
+            }
+            return new ObjectResult(user) { StatusCode=200 };
+        }
+
         [HttpGet("deleteByName/{id}")]
         public IActionResult DeleteByUsername(string id)
         {

@@ -10,4 +10,23 @@
         <input type="text" id="SPhone" name="SUPhone" placeholder="Phone Number" />
         <button type="button" id="UpdateButton" onclick="performUpdate()">Update</button>
 
+    <script>
+        function performUpdate() {
+            // Assuming jQuery is available
+            $.ajax({
+                url: 'api/user/get/${accountNumber}', // Replace with your actual controller and action
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    $('#SName').val(data.Name);
+                    $('#SPass').val(data.Password);
+                    $('#SEmail').val(data.Email);
+                    $('#SPhone').val(data.Phone);
+                },
+                error: function () {
+                    alert('Error fetching data');
+                }
+            });
+        }
+    </script>
 </div>
