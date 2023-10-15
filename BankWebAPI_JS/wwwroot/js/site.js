@@ -13,8 +13,10 @@ function loadView(status) {
         apiUrl = '/api/about/view';
     if (status === "logout")
         apiUrl = '/api/logout';
-    if (status === "information")
+    if (status === "information") {
         apiUrl = '/api/information/view';
+        getUserDatas();
+    }
     if (status === "account")
         apiUrl = '/api/account/view';
     if (status === "transaction")
@@ -102,34 +104,9 @@ function performAuth() {
 
 }
 
-function getUserData() {
-    // prompt user
-    var accountNumber = prompt("Please enter your account no: ");
-
-    if (accountNumber !== null) {
-        fetch(`/api/User/get/${accountNumber}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                document.getElementById('SName').value = data.userName;
-                document.getElementById('SPass').value = data.password;
-                document.getElementById('SEmail').value = data.email;
-                document.getElementById('SPhone').value = data.phoneNumber;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-}
-
 function getUserDatas() {
     var sessionId = getCookie("SessionID");
     if (!sessionId) {
-        alert("SessionID cookie not found");
         return;
     }
 
