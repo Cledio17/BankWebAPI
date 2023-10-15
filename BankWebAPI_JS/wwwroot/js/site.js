@@ -196,11 +196,12 @@ function getTransactionByFromId() {
     }
 
     $.ajax({
-        url: '/api/Transaction/getbyfromid/' + + sessionId, 
+        url: '/api/Transaction/getbyfromid/' + + sessionId, // Replace '123' with the actual account number
         type: 'GET',
         success: function (data) {
+            // Assuming the returned data is an array of transactions
             var tableBody = $("#transactionTableBody");
-            tableBody.empty(); 
+            tableBody.empty(); // Clear existing rows
 
             data.forEach(function (transaction) {
                 var row = "<tr>" +
@@ -229,46 +230,34 @@ function getCookie(name) {
     return null;
 }
 
-function updateUser() {
-    var username = document.getElementById('SName').value;
-    if (username !== null) {
-        var password = document.getElementById('SPass').value;
-        var email = document.getElementById('SEmail').value;
-        var phoneNumber = document.getElementById('SPhone').value;
-        var address = " ";
-        var pfp = " ";
+function updateUserData() {
+    var id = getCookie("SessionID");
+    var userName = $("#SName").val();
+    var password = $("#SPass").val();
+    var email = $("#SEmail").val();
+    var phoneNumber = $("#SPhone").val();
 
-        var user = {
-            UserName: username,
-            Password: password,
-            Email: email,
-            PhoneNumber: phoneNumber,
-            Address: address,
-            pfp: pfp,
-            acctNo: pfp
-        };
+    var user = {
+        "UserName": userName,
+        "Password": password,
+        "Email": email,
+        "PhoneNumber": phoneNumber
+    };
 
-        fetch(`/api/User/update/${username}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(user)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.text();
-            })
-            .then(message => {
-                window.alert('Success: ' + message);
-            })
-            .catch(error => {
-                window.alert('Error: ' + error);
-            });
-    }
-}
+    // Send AJAX request to update user data
+    $.ajax({
+        url: '/api/User/update/' + + userName,
+        type: "PUT",
+        contentType: "application/json",
+        data: JSON.stringify(user),
+        success: function (data) {
+            alert("Successfully updated");
+        },
+        error: function () {
+            alert("Could not update");
+        }
+    });
+}   
 
 
 
