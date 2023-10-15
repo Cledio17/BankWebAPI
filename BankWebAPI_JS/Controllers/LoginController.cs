@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using BankWebAPI_JS.Models;
+using BankWebAPI_JS.Data;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -55,11 +56,11 @@ namespace BankWebAPI_JS.Controllers
         {
             // Return the partial view as HTML
             var response = new { login = false};
-            // Login
+            User user1 = UserDBManager.GetById(user.UserName);
 
-            if (user!=null && user.UserName.Equals("sajib") && user.Password.Equals("mistry"))
+            if (user!=null && user1!=null && user.UserName.Equals(user1.UserName) && user.Password.Equals(user1.Password))
             {
-                Response.Cookies.Append("SessionID", "1234567");
+                Response.Cookies.Append("SessionID", user1.acctNo);
                 response = new { login = true };
             }
             return Json(response);

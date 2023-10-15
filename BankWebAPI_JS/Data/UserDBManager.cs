@@ -249,6 +249,51 @@ namespace BankWebAPI_JS.Data
             return user;
         }
 
+        public static User GetByAccNo(string id)
+        {
+            User user = null;
+
+            try
+            {
+                // Create a new SQLite connection
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+                {
+                    connection.Open();
+
+                    // Create a new SQLite command to execute SQL
+                    using (SQLiteCommand command = connection.CreateCommand())
+                    {
+                        // Build the SQL command to select a student by ID
+                        command.CommandText = "SELECT * FROM UserTable WHERE ID = @ID";
+                        command.Parameters.AddWithValue("@ID", id);
+
+                        // Execute the SQL command and retrieve data
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                user = new User();
+                                user.UserName = reader["Username"].ToString();
+                                user.Password = reader["Password"].ToString();
+                                user.Email = reader["Email"].ToString();
+                                user.PhoneNumber = reader["PhoneNumber"].ToString();
+                                user.Address = reader["Address"].ToString();
+                                user.pfp = reader["Pfp"].ToString();
+                                user.acctNo = reader["ID"].ToString();
+                            }
+                        }
+                    }
+                    connection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+
+            return user;
+        }
+
         public static void DBInitialize()
         {
             if (CreateTable())
