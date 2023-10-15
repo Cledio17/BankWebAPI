@@ -103,6 +103,7 @@ function performAuth() {
 }
 
 function getUserData() {
+    // prompt user
     var accountNumber = prompt("Please enter your account no: ");
 
     if (accountNumber !== null) {
