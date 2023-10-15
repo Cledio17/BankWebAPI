@@ -17,9 +17,11 @@ function loadView(status) {
         apiUrl = '/api/information/view';
         getUserDatas();
     }
-    if (status === "account")
+    if (status === "account") {
         apiUrl = '/api/account/view';
-    if (status === "transaction") { 
+        getAccBalance();
+    }
+    if (status === "transaction")
         apiUrl = '/api/transaction/view';
         getTransactionByFromId();
     }
@@ -106,6 +108,26 @@ function performAuth() {
 
 }
 
+function getAccBalance(){
+    var sessionId = getCookie("SessionID");
+    if (!sessionId) {
+        return;
+    }
+
+    $.ajax({
+        url: '/api/Account/get/' + + sessionId, // Replace '123' with the actual account number
+        type: 'GET',
+        success: function (data) {
+            // Assuming the returned data is in JSON format
+            $('#AcctNo').val(data.acctNo);
+            $('#AcctBal').val(data.acctBal);
+        },
+        error: function () {
+            alert('User not found');
+        }
+    });
+}
+
 function getUserDatas() {
     var sessionId = getCookie("SessionID");
     if (!sessionId) {
@@ -113,7 +135,7 @@ function getUserDatas() {
     }
 
     $.ajax({
-        url: '/api/User/getacc/' + + sessionId, // Replace '123' with the actual account number
+        url: '/api/User/getacc/' + + sessionId, 
         type: 'GET',
         success: function (data) {
             // Assuming the returned data is in JSON format
@@ -168,6 +190,35 @@ function getCookie(name) {
     }
     return null;
 }
+
+function updateUserData() {
+    var id = getCookie("SessionID");
+    var userName = $("#SName").val();
+    var password = $("#SPass").val();
+    var email = $("#SEmail").val();
+    var phoneNumber = $("#SPhone").val();
+
+    var user = {
+        "UserName": userName,
+        "Password": password,
+        "Email": email,
+        "PhoneNumber": phoneNumber
+    };
+
+    // Send AJAX request to update user data
+    $.ajax({
+        url: '/api/User/update/' + + userName,
+        type: "PUT",
+        contentType: "application/json",
+        data: JSON.stringify(user),
+        success: function (data) {
+            alert("Successfully updated");
+        },
+        error: function () {
+            alert("Could not update");
+        }
+    });
+}   
 
 
 

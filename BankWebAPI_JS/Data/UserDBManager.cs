@@ -162,7 +162,7 @@ namespace BankWebAPI_JS.Data
             }
         }
 
-        public static bool Update(String id, String password, String email, String phoneNumber, string address, string pfp)
+        public static bool Update(String id, String password, String email, String phoneNumber)
         {
             try
             {
@@ -175,13 +175,11 @@ namespace BankWebAPI_JS.Data
                     using (SQLiteCommand command = connection.CreateCommand())
                     {
                         // Build the SQL command to update data by ID
-                        command.CommandText = $"UPDATE UserTable SET Password = @Password, Email = @Email, PhoneNumber = @PhoneNumber, Address = @Address, Pfp = @Pfp WHERE Username = @Username";
+                        command.CommandText = $"UPDATE UserTable SET Password = @Password, Email = @Email, PhoneNumber = @PhoneNumber WHERE Username = @Username";
                         command.Parameters.AddWithValue("@Username", id);
                         command.Parameters.AddWithValue("@Password", password);
                         command.Parameters.AddWithValue("@Email", email);
                         command.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
-                        command.Parameters.AddWithValue("@Address", address);
-                        command.Parameters.AddWithValue("@Pfp", pfp);
 
                         // Execute the SQL command to update data
                         int rowsUpdated = command.ExecuteNonQuery();
