@@ -25,8 +25,10 @@ function loadView(status) {
         apiUrl = '/api/transaction/view';
         getTransactionByFromId();
     }
-    if (status === "transfer")
+    if (status === "transfer") {
         apiUrl = '/api/transfer/view';
+    }
+        
 
     console.log("Hello " + apiUrl);
 
@@ -53,6 +55,43 @@ function loadView(status) {
             console.error('Fetch error:', error);
         });
 
+}
+
+function performTransfer() {
+    var fromid = getCookie("SessionID");
+    var toid = document.getElementById('STo').value;
+    var balance = document.getElementById('SAmount').value;
+    var descriptiondata = document.getElementById('SDescription').value;
+    var currentDate = new Date();
+    var formattedDateTime = currentDate.toISOString();
+    var transaction = {
+        transId: "1",
+        fromId: fromid,
+        toId: toid,
+        bal: parseFloat(balance),
+        transactionDate: formattedDateTime,
+        description: descriptiondata
+    };
+    fetch('/api/Transaction', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(transaction)
+    })
+        .then(response => {
+            if (response.ok) {
+                return response.text(); // Assuming the server sends a text response upon success
+            } else {
+                throw new Error('Network response was not ok. Some errors have occurred.');
+            }
+        })
+        .then(message => {
+            alert("Successfully Transfer");
+        })
+        .catch(error => {
+            alert("Error");
+        });
 }
 
 
@@ -170,8 +209,8 @@ function getTransactionByFromId() {
                     "<td>" + transaction.fromId + "</td>" +
                     "<td>" + transaction.toId + "</td>" +
                     "<td>" + transaction.bal + "</td>" +
-                    "<td>" + "Hello" + "</td>" +
-                    "<td>" + "12/12/2002" + "</td>" +
+                    "<td>" + transaction.description + "</td>" +
+                    "<td>" + transaction.transactionDate + "</td>" +
                     "</tr>";
                 tableBody.append(row);
             });

@@ -61,7 +61,7 @@ namespace BankWebAPI_JS.Data
                         int transactionCount = Convert.ToInt32(countCommand.ExecuteScalar());
                         using (SQLiteCommand insertCommand = connection.CreateCommand())
                         {
-                            insertCommand.CommandText = @"INSERT INTO TransactionTable (TransactionId, FromId, ToId, Balance) VALUES (@TransactionId, @FromId, @ToId, @Balance)";
+                            insertCommand.CommandText = @"INSERT INTO TransactionTable (TransactionId, FromId, ToId, Balance, TransactionDate, Description) VALUES (@TransactionId, @FromId, @ToId, @Balance, @TransactionDate, @Description)";
 
                             insertCommand.Parameters.AddWithValue("@TransactionId", transactionCount + 1); // Use transactionCount + 1 as the new TransactionId
                             insertCommand.Parameters.AddWithValue("@FromId", transaction.fromId);
@@ -241,6 +241,8 @@ namespace BankWebAPI_JS.Data
                                 transaction.fromId = reader["FromId"].ToString();
                                 transaction.toId = reader["ToId"].ToString();
                                 transaction.bal = Convert.ToDouble(reader["Balance"]);
+                                transaction.transactionDate = Convert.ToDateTime(reader["TransactionDate"]);
+                                transaction.description = reader["Description"].ToString();
                                 transactions.Add(transaction);
                             }
                         }
@@ -265,18 +267,24 @@ namespace BankWebAPI_JS.Data
                 transaction.fromId = "123456789";
                 transaction.toId = "123456788";
                 transaction.bal = 200;
+                transaction.transactionDate = DateTime.Now;
+                transaction.description = "Description";
                 Insert(transaction);
 
                 transaction = new Transaction();
                 transaction.fromId = "123456789";
                 transaction.toId = "123456788";
                 transaction.bal = 500;
+                transaction.transactionDate = DateTime.Now;
+                transaction.description = "Description1";
                 Insert(transaction);
 
                 transaction = new Transaction();
                 transaction.fromId = "123456788";
                 transaction.toId = "123456787";
                 transaction.bal = 200;
+                transaction.transactionDate = DateTime.Now;
+                transaction.description = "Description2";
                 Insert(transaction);
             }
         }

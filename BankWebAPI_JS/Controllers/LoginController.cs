@@ -19,7 +19,8 @@ namespace BankWebAPI_JS.Controllers
             if (Request.Cookies.ContainsKey("SessionID"))
             {
                 var cookieValue = Request.Cookies["SessionID"];
-                if (cookieValue == "1234567")
+                User user = UserDBManager.GetByAccNo(cookieValue);
+                if (cookieValue == user.acctNo)
                 {
                     return PartialView("LoginViewAuthenticated");
                 }
@@ -35,7 +36,8 @@ namespace BankWebAPI_JS.Controllers
             if (Request.Cookies.ContainsKey("SessionID"))
             {
                 var cookieValue = Request.Cookies["SessionID"];
-                if (cookieValue == "1234567")
+                User user = UserDBManager.GetByAccNo(cookieValue);
+                if (cookieValue == user.acctNo)
                 {
                     return PartialView("LoginViewAuthenticated");
                 }
