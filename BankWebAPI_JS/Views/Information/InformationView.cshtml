@@ -2,6 +2,11 @@
     Layout = null;
 }
 
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
 <div id="InformationForm">
     <input type="text" id="SName" name="SUname" placeholder="User Name" />
     <input type="password" id="SPass" name="SPassword" placeholder="Password" />
@@ -9,34 +14,3 @@
     <input type="text" id="SPhone" name="SUPhone" placeholder="Phone Number" />
     <button type="button" id="UpdateButton" onclick="getUserData()">Update</button>
 </div>
-
-<script>
-    function getCookie(name) {
-        var value = "; " + document.cookie;
-        var parts = value.split("; " + name + "=");
-        if (parts.length == 2) return parts.pop().split(";").shift();
-    }
-
-    function getUserData() {
-        var acctNumber = getCookie('SessionID');
-
-        if (acctNumber !== null) {
-            fetch(`/api/User/get/${acctNumber}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    document.getElementById('SName').value = data.userName;
-                    document.getElementById('SPass').value = data.password;
-                    document.getElementById('SEmail').value = data.email;
-                    document.getElementById('SPhone').value = data.phoneNumber;
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        }
-    }
-</script>

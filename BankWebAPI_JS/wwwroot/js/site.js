@@ -102,6 +102,29 @@ function performAuth() {
 
 }
 
+function getUserData() {
+    var accountNumber = prompt("Please enter your account no: ");
+
+    if (accountNumber !== null) {
+        fetch(`/api/User/get/${accountNumber}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('SName').value = data.userName;
+                document.getElementById('SPass').value = data.password;
+                document.getElementById('SEmail').value = data.email;
+                document.getElementById('SPhone').value = data.phoneNumber;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+}
+
 
 document.addEventListener("DOMContentLoaded", loadView);
 /*
