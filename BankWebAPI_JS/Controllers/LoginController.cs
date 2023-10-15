@@ -55,7 +55,7 @@ namespace BankWebAPI_JS.Controllers
         {
             // Return the partial view as HTML
             var response = new { login = false};
-            // Logign
+            // Login
 
             if (user!=null && user.UserName.Equals("sajib") && user.Password.Equals("mistry"))
             {
