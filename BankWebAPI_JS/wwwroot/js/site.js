@@ -21,7 +21,7 @@ function loadView(status) {
         apiUrl = '/api/account/view';
         getAccBalance();
     }
-    if (status === "transaction")
+    if (status === "transaction") { 
         apiUrl = '/api/transaction/view';
         getTransactionByFromId();
     }
