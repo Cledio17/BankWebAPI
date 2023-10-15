@@ -13,16 +13,22 @@ function loadView(status) {
         apiUrl = '/api/about/view';
     if (status === "logout")
         apiUrl = '/api/logout';
-    if (status === "information")
+    if (status === "information") {
         apiUrl = '/api/information/view';
-    if (status === "userlist")
-        apiUrl = '/api/user/view';
-    if (status === "createuser")
-        apiUrl = '/api/user/createview';
-    if (status === "edituser")
-        apiUrl = '/api/user/editview';
-    if (status === "transaction")
+        getUserDatas();
+    }
+    if (status === "account") {
+        apiUrl = '/api/account/view';
+        getAccBalance();
+    }
+    if (status === "transaction") {
         apiUrl = '/api/transaction/view';
+        getTransactionByFromId();
+    }
+    if (status === "transfer") {
+        apiUrl = '/api/transfer/view';
+    }
+
 
     console.log("Hello " + apiUrl);
 
@@ -39,10 +45,9 @@ function loadView(status) {
             if (status === "logout") {
                 document.getElementById('LogoutButton').style.display = "none";
                 document.getElementById('InformationButton').style.display = "none";
-                document.getElementById('UserButton').style.display = "none";
-                document.getElementById('CreateButton').style.display = "none";
-                document.getElementById('EditButton').style.display = "none";
+                document.getElementById('AccountButton').style.display = "none";
                 document.getElementById('TransactionButton').style.display = "none";
+                document.getElementById('TransferButton').style.display = "none";
             }
         })
         .catch(error => {
@@ -50,6 +55,43 @@ function loadView(status) {
             console.error('Fetch error:', error);
         });
 
+}
+
+function performTransfer() {
+    var fromid = getCookie("SessionID");
+    var toid = document.getElementById('STo').value;
+    var balance = document.getElementById('SAmount').value;
+    var descriptiondata = document.getElementById('SDescription').value;
+    var currentDate = new Date();
+    var formattedDateTime = currentDate.toISOString();
+    var transaction = {
+        transId: "1",
+        fromId: fromid,
+        toId: toid,
+        bal: parseFloat(balance),
+        transactionDate: formattedDateTime,
+        description: descriptiondata
+    };
+    fetch('/api/Transaction', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(transaction)
+    })
+        .then(response => {
+            if (response.ok) {
+                return response.text(); // Assuming the server sends a text response upon success
+            } else {
+                throw new Error('Network response was not ok. Some errors have occurred.');
+            }
+        })
+        .then(message => {
+            alert("Successfully Transfer");
+        })
+        .catch(error => {
+            alert("Error");
+        });
 }
 
 
@@ -89,10 +131,9 @@ function performAuth() {
                 loadView("authview");
                 document.getElementById('LogoutButton').style.display = "block";
                 document.getElementById('InformationButton').style.display = "block";
-                document.getElementById('UserButton').style.display = "block";
-                document.getElementById('CreateButton').style.display = "block";
-                document.getElementById('EditButton').style.display = "block";
+                document.getElementById('AccountButton').style.display = "block";
                 document.getElementById('TransactionButton').style.display = "block";
+                document.getElementById('TransferButton').style.display = "block";
             }
             else {
                 loadView("error");
@@ -105,6 +146,131 @@ function performAuth() {
         });
 
 }
+
+function getAccBalance() {
+    var sessionId = getCookie("SessionID");
+    if (!sessionId) {
+        return;
+    }
+
+    $.ajax({
+        url: '/api/Account/get/' + + sessionId, // Replace '123' with the actual account number
+        type: 'GET',
+        success: function (data) {
+            // Assuming the returned data is in JSON format
+            $('#AcctNo').val(data.acctNo);
+            $('#AcctBal').val(data.acctBal);
+        },
+        error: function () {
+            alert('User not found');
+        }
+    });
+}
+
+function getUserDatas() {
+    var sessionId = getCookie("SessionID");
+    if (!sessionId) {
+        return;
+    }
+
+    $.ajax({
+        url: '/api/User/getacc/' + + sessionId,
+        type: 'GET',
+        success: function (data) {
+            // Assuming the returned data is in JSON format
+            $('#SName').val(data.userName);
+            $('#SPass').val(data.password);
+            $('#SEmail').val(data.email);
+            $('#SPhone').val(data.phoneNumber);
+        },
+        error: function () {
+            alert('User not found');
+        }
+    });
+}
+
+function getTransactionByFromId() {
+    var sessionId = getCookie("SessionID");
+    if (!sessionId) {
+        return;
+    }
+
+    $.ajax({
+        url: '/api/Transaction/getbyfromid/' + + sessionId, // Replace '123' with the actual account number
+        type: 'GET',
+        success: function (data) {
+            // Assuming the returned data is an array of transactions
+            var tableBody = $("#transactionTableBody");
+            tableBody.empty(); // Clear existing rows
+
+            data.forEach(function (transaction) {
+                var row = "<tr>" +
+                    "<td>" + transaction.transId + "</td>" +
+                    "<td>" + transaction.fromId + "</td>" +
+                    "<td>" + transaction.toId + "</td>" +
+                    "<td>" + transaction.bal + "</td>" +
+                    "<td>" + transaction.description + "</td>" +
+                    "<td>" + transaction.transactionDate + "</td>" +
+                    "</tr>";
+                tableBody.append(row);
+            });
+        },
+        error: function () {
+            alert('Error fetching transaction data');
+        }
+    });
+}
+
+function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length === 2) {
+        return parts.pop().split(";").shift();
+    }
+    return null;
+}
+
+function updateUser() {
+    var username = document.getElementById('SName').value;
+    if (username !== null) {
+        var password = document.getElementById('SPass').value;
+        var email = document.getElementById('SEmail').value;
+        var phoneNumber = document.getElementById('SPhone').value;
+        var address = " ";
+        var pfp = " ";
+
+        var user = {
+            UserName: username,
+            Password: password,
+            Email: email,
+            PhoneNumber: phoneNumber,
+            Address: address,
+            pfp: pfp,
+            acctNo: pfp
+        };
+
+        fetch(`/api/User/update/${username}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(message => {
+                window.alert('Success: ' + message);
+            })
+            .catch(error => {
+                window.alert('Error: ' + error);
+            });
+    }
+}
+
 
 
 document.addEventListener("DOMContentLoaded", loadView);
