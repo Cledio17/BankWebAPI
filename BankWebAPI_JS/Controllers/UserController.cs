@@ -29,7 +29,7 @@ namespace BankWebAPI_JS.Controllers
             return new ObjectResult(user) { StatusCode = 200 };
         }
 
-        [HttpGet("get/{accountNumber}")]
+        [HttpGet("getacc/{id}")]
         public IActionResult GetByAccNo(string id) 
         {
             User user = UserDBManager.GetByAccNo(id);

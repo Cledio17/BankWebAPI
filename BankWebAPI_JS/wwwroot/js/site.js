@@ -126,6 +126,39 @@ function getUserData() {
     }
 }
 
+function getUserDatas() {
+    var sessionId = getCookie("SessionID");
+    if (!sessionId) {
+        alert("SessionID cookie not found");
+        return;
+    }
+
+    $.ajax({
+        url: '/api/User/getacc/' + + sessionId, // Replace '123' with the actual account number
+        type: 'GET',
+        success: function (data) {
+            // Assuming the returned data is in JSON format
+            $('#SName').val(data.userName);
+            $('#SPass').val(data.password);
+            $('#SEmail').val(data.email);
+            $('#SPhone').val(data.phoneNumber);
+        },
+        error: function () {
+            alert('User not found');
+        }
+    });
+}
+
+function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length === 2) {
+        return parts.pop().split(";").shift();
+    }
+    return null;
+}
+
+
 
 document.addEventListener("DOMContentLoaded", loadView);
 /*
