@@ -15,19 +15,16 @@ function loadView(status) {
         apiUrl = '/api/logout';
     if (status === "information") {
         apiUrl = '/api/information/view';
-        getUserDatas();
     }
-    if (status === "account") {
-        apiUrl = '/api/account/view';
-        getAccBalance();
-    }
-    if (status === "transaction") {
+    if (status === "userlist") 
+        apiUrl = '/api/user/view';
+    if (status === "createuser") 
+        apiUrl = '/api/user/createview';
+    if (status === "edituser")
+        apiUrl = '/api/user/editview';
+    if (status === "transaction") 
         apiUrl = '/api/transaction/view';
-        getTransactionByFromId();
-    }
-    if (status === "transfer") {
-        apiUrl = '/api/transfer/view';
-    }
+    
 
 
     console.log("Hello " + apiUrl);
@@ -45,9 +42,10 @@ function loadView(status) {
             if (status === "logout") {
                 document.getElementById('LogoutButton').style.display = "none";
                 document.getElementById('InformationButton').style.display = "none";
-                document.getElementById('AccountButton').style.display = "none";
+                document.getElementById('UserButton').style.display = "none";
+                document.getElementById('CreateButton').style.display = "none";
+                document.getElementById('EditButton').style.display = "none";
                 document.getElementById('TransactionButton').style.display = "none";
-                document.getElementById('TransferButton').style.display = "none";
             }
         })
         .catch(error => {
@@ -131,9 +129,10 @@ function performAuth() {
                 loadView("authview");
                 document.getElementById('LogoutButton').style.display = "block";
                 document.getElementById('InformationButton').style.display = "block";
-                document.getElementById('AccountButton').style.display = "block";
+                document.getElementById('UserButton').style.display = "block";
+                document.getElementById('CreateButton').style.display = "block";
+                document.getElementById('EditButton').style.display = "block";
                 document.getElementById('TransactionButton').style.display = "block";
-                document.getElementById('TransferButton').style.display = "block";
             }
             else {
                 loadView("error");
@@ -167,7 +166,7 @@ function getAccBalance() {
     });
 }
 
-function getUserDatas() {
+function getAdminData() {
     var sessionId = getCookie("SessionID");
     if (!sessionId) {
         return;

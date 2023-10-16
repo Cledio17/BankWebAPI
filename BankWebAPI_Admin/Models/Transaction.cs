@@ -6,5 +6,7 @@
         public string fromId { get; set; }
         public string toId { get; set; }
         public double bal { get; set; }
+        public DateTime transactionDate { get; set; }
+        public string description { get; set; }
     }
 }

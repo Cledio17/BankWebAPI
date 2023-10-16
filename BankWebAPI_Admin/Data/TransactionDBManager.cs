@@ -5,7 +5,7 @@ namespace BankWebAPI_Admin.Data
 {
     public class TransactionDBManager
     {
-        private static string connectionString = "Data Source=accountdatabase.db;Version=3;";
+        private static string connectionString = "Data Source=bankdatabase.db;Version=3;";
 
         public static bool CreateTable()
         {
@@ -20,12 +20,15 @@ namespace BankWebAPI_Admin.Data
                     {
                         // SQL command to create a table named "AccountTable"
                         command.CommandText = @"
-                    CREATE TABLE TransactionTable (
-                        TransactionId TEXT,
-                        FromId TEXT,
-                        ToId TEXT,
-                        Balance REAL
-                    )";
+                            CREATE TABLE TransactionTable (
+                                TransactionId TEXT,
+                                FromId TEXT,
+                                ToId TEXT,
+                                Balance REAL,
+                                TransactionDate DATETIME,
+                                Description TEXT
+                            )";
+
 
                         // Execute the SQL command to create the table
                         command.ExecuteNonQuery();
@@ -52,21 +55,28 @@ namespace BankWebAPI_Admin.Data
                 {
                     connection.Open();
 
-                    using (SQLiteCommand command = connection.CreateCommand())
+                    using (SQLiteCommand countCommand = connection.CreateCommand())
                     {
-                        command.CommandText = @"INSERT INTO TransactionTable (TransactionId, FromId, ToId, Balance) VALUES (@TransactionId, @FromId, @ToId, @Balance)";
-
-                        command.Parameters.AddWithValue("@TransactionId", transaction.transId);
-                        command.Parameters.AddWithValue("@FromId", transaction.fromId);
-                        command.Parameters.AddWithValue("@ToId", transaction.toId);
-                        command.Parameters.AddWithValue("@Balance", transaction.bal);
-
-                        int rowsInserted = command.ExecuteNonQuery();
-
-                        connection.Close();
-                        if (rowsInserted > 0)
+                        countCommand.CommandText = "SELECT COUNT(*) FROM TransactionTable";
+                        int transactionCount = Convert.ToInt32(countCommand.ExecuteScalar());
+                        using (SQLiteCommand insertCommand = connection.CreateCommand())
                         {
-                            return true; // Insertion was successful
+                            insertCommand.CommandText = @"INSERT INTO TransactionTable (TransactionId, FromId, ToId, Balance, TransactionDate, Description) VALUES (@TransactionId, @FromId, @ToId, @Balance, @TransactionDate, @Description)";
+
+                            insertCommand.Parameters.AddWithValue("@TransactionId", transactionCount + 1); // Use transactionCount + 1 as the new TransactionId
+                            insertCommand.Parameters.AddWithValue("@FromId", transaction.fromId);
+                            insertCommand.Parameters.AddWithValue("@ToId", transaction.toId);
+                            insertCommand.Parameters.AddWithValue("@Balance", transaction.bal);
+                            insertCommand.Parameters.AddWithValue("@TransactionDate", transaction.transactionDate);
+                            insertCommand.Parameters.AddWithValue("@Description", transaction.description);
+
+                            int rowsInserted = insertCommand.ExecuteNonQuery();
+
+                            if (rowsInserted > 0)
+                            {
+                                connection.Close();
+                                return true; // Insertion was successful
+                            }
                         }
                     }
                     connection.Close();
@@ -120,7 +130,7 @@ namespace BankWebAPI_Admin.Data
             }
         }
 
-        public static bool UpdateTo(Transaction transaction,Account acc2)
+        public static bool UpdateTo(Transaction transaction, Account acc2)
         {
             try
             {
@@ -187,6 +197,8 @@ namespace BankWebAPI_Admin.Data
                                 transaction.fromId = reader["FromId"].ToString();
                                 transaction.toId = reader["ToId"].ToString();
                                 transaction.bal = Convert.ToDouble(reader["Balance"]);
+                                transaction.transactionDate = Convert.ToDateTime(reader["TransactionDate"]);
+                                transaction.description = reader["Description"].ToString();
                             }
                         }
                     }
@@ -199,6 +211,82 @@ namespace BankWebAPI_Admin.Data
             }
 
             return transaction;
+        }
+
+        public static List<Transaction> GetByFromId(string id)
+        {
+            List<Transaction> transactions = new List<Transaction>();
+
+            try
+            {
+                // Create a new SQLite connection
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+                {
+                    connection.Open();
+
+                    // Create a new SQLite command to execute SQL
+                    using (SQLiteCommand command = connection.CreateCommand())
+                    {
+                        // Build the SQL command to select transactions by FromId
+                        command.CommandText = "SELECT * FROM TransactionTable WHERE FromId = @FromId";
+                        command.Parameters.AddWithValue("@FromId", id);
+
+                        // Execute the SQL command and retrieve data
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Transaction transaction = new Transaction();
+                                transaction.transId = reader["TransactionId"].ToString();
+                                transaction.fromId = reader["FromId"].ToString();
+                                transaction.toId = reader["ToId"].ToString();
+                                transaction.bal = Convert.ToDouble(reader["Balance"]);
+                                transaction.transactionDate = Convert.ToDateTime(reader["TransactionDate"]);
+                                transaction.description = reader["Description"].ToString();
+                                transactions.Add(transaction);
+                            }
+                        }
+                    }
+                    connection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+
+            return transactions;
+        }
+
+
+        public static void DBInitialize()
+        {
+            if (CreateTable())
+            {
+                Transaction transaction = new Transaction();
+                transaction.fromId = "123456789";
+                transaction.toId = "123456788";
+                transaction.bal = 200;
+                transaction.transactionDate = DateTime.Now;
+                transaction.description = "Description";
+                Insert(transaction);
+
+                transaction = new Transaction();
+                transaction.fromId = "123456789";
+                transaction.toId = "123456788";
+                transaction.bal = 500;
+                transaction.transactionDate = DateTime.Now;
+                transaction.description = "Description1";
+                Insert(transaction);
+
+                transaction = new Transaction();
+                transaction.fromId = "123456788";
+                transaction.toId = "123456787";
+                transaction.bal = 200;
+                transaction.transactionDate = DateTime.Now;
+                transaction.description = "Description2";
+                Insert(transaction);
+            }
         }
     }
 }

@@ -1,7 +1,13 @@
+using BankWebAPI_Admin.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+AccountDBManager.DBInitialize();
+UserDBManager.DBInitialize();
+TransactionDBManager.DBInitialize();
 
 var app = builder.Build();
 
