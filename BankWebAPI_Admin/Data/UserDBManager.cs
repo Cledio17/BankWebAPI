@@ -162,7 +162,7 @@ namespace BankWebAPI_Admin.Data
             }
         }
 
-        public static bool Update(User user)
+        public static bool Update(String id, String password, String email, String phoneNumber)
         {
             try
             {
@@ -175,13 +175,11 @@ namespace BankWebAPI_Admin.Data
                     using (SQLiteCommand command = connection.CreateCommand())
                     {
                         // Build the SQL command to update data by ID
-                        command.CommandText = $"UPDATE UserTable SET Name = @Name, Balance = @Balance WHERE Username = @Username";
-                        command.Parameters.AddWithValue("@Username", user.UserName);
-                        command.Parameters.AddWithValue("@Password", user.Password);
-                        command.Parameters.AddWithValue("@Email", user.Email);
-                        command.Parameters.AddWithValue("@PhoneNumber", user.PhoneNumber);
-                        command.Parameters.AddWithValue("@Address", user.Address);
-                        command.Parameters.AddWithValue("@Pfp", user.pfp);
+                        command.CommandText = $"UPDATE UserTable SET Password = @Password, Email = @Email, PhoneNumber = @PhoneNumber WHERE Username = @Username";
+                        command.Parameters.AddWithValue("@Username", id);
+                        command.Parameters.AddWithValue("@Password", password);
+                        command.Parameters.AddWithValue("@Email", email);
+                        command.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
 
                         // Execute the SQL command to update data
                         int rowsUpdated = command.ExecuteNonQuery();
@@ -249,6 +247,97 @@ namespace BankWebAPI_Admin.Data
             return user;
         }
 
+        public static User GetByAccNo(string id)
+        {
+            User user = null;
+
+            try
+            {
+                // Create a new SQLite connection
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+                {
+                    connection.Open();
+
+                    // Create a new SQLite command to execute SQL
+                    using (SQLiteCommand command = connection.CreateCommand())
+                    {
+                        // Build the SQL command to select a student by ID
+                        command.CommandText = "SELECT * FROM UserTable WHERE ID = @ID";
+                        command.Parameters.AddWithValue("@ID", id);
+
+                        // Execute the SQL command and retrieve data
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                user = new User();
+                                user.UserName = reader["Username"].ToString();
+                                user.Password = reader["Password"].ToString();
+                                user.Email = reader["Email"].ToString();
+                                user.PhoneNumber = reader["PhoneNumber"].ToString();
+                                user.Address = reader["Address"].ToString();
+                                user.pfp = reader["Pfp"].ToString();
+                                user.acctNo = reader["ID"].ToString();
+                            }
+                        }
+                    }
+                    connection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+
+            return user;
+        }
+
+        public static List<User> GetAllUsers()
+        {
+            List<User> userList = new List<User>();
+
+            try
+            {
+                // Create a new SQLite connection
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+                {
+                    connection.Open();
+
+                    // Create a new SQLite command to execute SQL
+                    using (SQLiteCommand command = connection.CreateCommand())
+                    {
+                        // Build the SQL command to select all users
+                        command.CommandText = "SELECT * FROM UserTable";
+
+                        // Execute the SQL command and retrieve data
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                User user = new User();
+                                user.UserName = reader["Username"].ToString();
+                                user.Password = reader["Password"].ToString();
+                                user.Email = reader["Email"].ToString();
+                                user.PhoneNumber = reader["PhoneNumber"].ToString();
+                                user.Address = reader["Address"].ToString();
+                                user.pfp = reader["Pfp"].ToString();
+                                user.acctNo = reader["ID"].ToString();
+                                userList.Add(user);
+                            }
+                        }
+                    }
+                    connection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+
+            return userList;
+        }
+
+
         public static void DBInitialize()
         {
             if (CreateTable())
@@ -283,6 +372,15 @@ namespace BankWebAPI_Admin.Data
                 user.acctNo = "123456787";
                 Insert(user);
 
+                user = new User();
+                user.UserName = "admin";
+                user.Password = "admin123";
+                user.Email = "admin@gmail.com";
+                user.PhoneNumber = "0123456785";
+                user.Address = "Company Lot 9010";
+                user.pfp = "C:\\Users\\User\\source\\repos\\BankWebAPI\\ironman.jpg";
+                user.acctNo = "123456786";
+                Insert(user);
             }
         }
     }

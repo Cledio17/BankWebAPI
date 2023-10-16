@@ -15,15 +15,22 @@ function loadView(status) {
         apiUrl = '/api/logout';
     if (status === "information") {
         apiUrl = '/api/information/view';
+        getAdminData();
     }
-    if (status === "userlist") 
+    if (status === "userlist") {
         apiUrl = '/api/user/view';
+        getUserList();
+    }
+       
     if (status === "createuser") 
         apiUrl = '/api/user/createview';
     if (status === "edituser")
         apiUrl = '/api/user/editview';
-    if (status === "transaction") 
+    if (status === "transaction") {
         apiUrl = '/api/transaction/view';
+        getAllTransaction();
+    }
+        
     
 
 
@@ -92,6 +99,42 @@ function performTransfer() {
         });
 }
 
+function performCreate() {
+    var acctno = document.getElementById('SAccountNumber').value;
+    var name = document.getElementById('SName').value;
+    var password = document.getElementById('SPass').value;
+    var email = document.getElementById('SEmail').value;
+    var phone = document.getElementById('SPhone').value;
+    var user = {
+        UserName: name,
+        Password: password,
+        Email: email,
+        PhoneNumber: phone,
+        Address: "Lot 2023",
+        pfp: "C:\\Users\\User\\source\\repos\\BankWebAPI\\ironman.jpg",
+        acctNo: acctno
+    };
+
+    fetch('/api/User', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(message => {
+            alert("Succesfully Inserted");
+        })
+        .catch(error => {
+            alert("Error");
+        });
+}
 
 function performAuth() {
 
@@ -173,7 +216,7 @@ function getAdminData() {
     }
 
     $.ajax({
-        url: '/api/User/getacc/' + + sessionId,
+        url: '/api/User/get/' + + sessionId,
         type: 'GET',
         success: function (data) {
             // Assuming the returned data is in JSON format
@@ -188,14 +231,66 @@ function getAdminData() {
     });
 }
 
-function getTransactionByFromId() {
-    var sessionId = getCookie("SessionID");
-    if (!sessionId) {
-        return;
-    }
+function getUserList() {
 
     $.ajax({
-        url: '/api/Transaction/getbyfromid/' + + sessionId, // Replace '123' with the actual account number
+        url: '/api/User/getall',
+        type: 'GET',
+        success: function (data) {
+            // Assuming the returned data is an array of transactions
+            var tableBody = $("#userTableBody");
+            tableBody.empty(); // Clear existing rows
+
+            data.forEach(function (user) {
+                var row = "<tr>" +
+                    "<td>" + user.acctNo + "</td>" +
+                    "<td>" + user.userName + "</td>" +
+                    "<td>" + user.password + "</td>" +
+                    "<td>" + user.email + "</td>" +
+                    "<td>" + user.phoneNumber + "</td>" +
+                    "</tr>";
+                tableBody.append(row);
+            });
+        },
+        error: function () {
+            alert('Error fetching transaction data');
+        }
+    });
+}
+
+function getAllTransaction() {
+
+    $.ajax({
+        url: '/api/Transaction/getall',
+        type: 'GET',
+        success: function (data) {
+            // Assuming the returned data is an array of transactions
+            var tableBody = $("#transactionTableBody");
+            tableBody.empty(); // Clear existing rows
+
+            data.forEach(function (transaction) {
+                var row = "<tr>" +
+                    "<td>" + transaction.transId + "</td>" +
+                    "<td>" + transaction.fromId + "</td>" +
+                    "<td>" + transaction.toId + "</td>" +
+                    "<td>" + transaction.bal + "</td>" +
+                    "<td>" + transaction.description + "</td>" +
+                    "<td>" + transaction.transactionDate + "</td>" +
+                    "</tr>";
+                tableBody.append(row);
+            });
+        },
+        error: function () {
+            alert('Error fetching transaction data');
+        }
+    });
+}
+
+function getTransactionByFromId() {
+    var searchid = document.getElementById('SSearchNumber').value;
+
+    $.ajax({
+        url: '/api/Transaction/getbyfromid/' + + searchid, // Replace '123' with the actual account number
         type: 'GET',
         success: function (data) {
             // Assuming the returned data is an array of transactions
