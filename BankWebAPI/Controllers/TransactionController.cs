@@ -11,28 +11,28 @@ namespace BankWebAPI.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Transaction transaction)
         {
-            Account account = AccountDBManager.GetById(transaction.fromId);
-            Account account2 = AccountDBManager.GetById(transaction.toId);
-            if(account != null && account2 != null)
+            Account account = AccountDBManager.GetById(transaction.acctNo);
+            if(account != null)
             {
                 if (TransactionDBManager.Insert(transaction))
                 {
-                    TransactionDBManager.Update(transaction, account, account2);
-                    return Ok("Successfully inserted");
+                    TransactionDBManager.Update(transaction, account);
+                    return Ok("Transaction successful.");
                 }
             }
-            return BadRequest("Error in data insertion");
+            return BadRequest("Error: Account not found");
         }
         [HttpGet]
         [Route("{id}")]
         public IActionResult Get(string id)
         {
-            Transaction transaction = TransactionDBManager.GetById(id);
+            /*Transaction transaction = TransactionDBManager.GetById(id);
             if (transaction == null)
             {
                 return NotFound();
             }
-            return Ok(transaction);
+            return Ok(transaction);*/
+            return View();
         }
     }
 }

@@ -22,9 +22,10 @@ namespace BankWebAPI.Data
                         // SQL command to create a table named "AccountTable"
                         command.CommandText = @"
                     CREATE TABLE AccountTable (
-                        ID TEXT,
+                        ID TEXT PRIMARY KEY,
                         Name TEXT,
-                        Balance REAL
+                        Balance REAL,
+                        TransHist TEXT
                     )";
 
                         // Execute the SQL command to create the table
@@ -48,27 +49,40 @@ namespace BankWebAPI.Data
         {
             try
             {
-                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+                int num;
+                if (int.TryParse(account.acctNo, out num))
                 {
-                    connection.Open();
-
-                    using (SQLiteCommand command = connection.CreateCommand())
+                    using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                     {
-                        command.CommandText = @"INSERT INTO AccountTable (ID, Name, Balance) VALUES (@ID, @Name, @Balance)";
+                        connection.Open();
 
-                        command.Parameters.AddWithValue("@ID", account.acctNo);
-                        command.Parameters.AddWithValue("@Name", account.acctName);
-                        command.Parameters.AddWithValue("@Balance", account.acctBal);
-
-                        int rowsInserted = command.ExecuteNonQuery();
-
-                        connection.Close();
-                        if (rowsInserted > 0)
+                        using (SQLiteCommand command = connection.CreateCommand())
                         {
-                            return true; // Insertion was successful
+                            command.CommandText = @"INSERT INTO AccountTable (ID, Name, Balance, TransHist) VALUES (@ID, @Name, @Balance, @TransHist)";
+
+                            command.Parameters.AddWithValue("@ID", account.acctNo);
+                            command.Parameters.AddWithValue("@Name", account.acctName);
+                            command.Parameters.AddWithValue("@Balance", account.acctBal);
+                            command.Parameters.AddWithValue("@TransHist", account.transHist);
+
+                            int rowsInserted = command.ExecuteNonQuery();
+
+                            connection.Close();
+                            if (rowsInserted > 0)
+                            {
+                                Console.WriteLine("Successfully created bank account: ");
+                                Console.WriteLine("Account number: " + account.acctNo);
+                                Console.WriteLine("Account name: " + account.acctName);
+                                Console.WriteLine("Tranfer amount: " + account.acctBal + "\n");
+                                return true; //Creation was successful
+                            }
                         }
+                        connection.Close();
                     }
-                    connection.Close();
+                }
+                else
+                {
+                    return false;
                 }
             }
             catch (Exception ex)
@@ -183,7 +197,7 @@ namespace BankWebAPI.Data
                                 account.acctNo = reader["ID"].ToString();
                                 account.acctName = reader["Name"].ToString();
                                 account.acctBal = Convert.ToDouble(reader["Balance"]);
-
+                                account.transHist = reader["TransHist"].ToString();
                             }
                         }
                     }
@@ -204,20 +218,72 @@ namespace BankWebAPI.Data
             {
                 Account account = new Account();
                 account.acctNo = "123456789";
-                account.acctName = "Sajib";
+                account.acctName = "clement1";
                 account.acctBal = 20000;
+                account.transHist = "";
                 Insert(account);
 
                 account = new Account();
                 account.acctNo = "123456788";
-                account.acctName = "Abu";
+                account.acctName = "kungsoon2";
                 account.acctBal = 10000;
+                account.transHist = "";
                 Insert(account);
 
                 account = new Account();
                 account.acctNo = "123456787";
-                account.acctName = "Ali";
+                account.acctName = "lusheng3";
                 account.acctBal = 915.70;
+                account.transHist = "";
+                Insert(account);
+
+                account = new Account();
+                account.acctNo = "123456444";
+                account.acctName = "user4";
+                account.acctBal = 44.44;
+                account.transHist = "";
+                Insert(account);
+
+                account = new Account();
+                account.acctNo = "1234565";
+                account.acctName = "user5";
+                account.acctBal = 555.55;
+                account.transHist = "";
+                Insert(account);
+
+                account = new Account();
+                account.acctNo = "123456666";
+                account.acctName = "user6";
+                account.acctBal = 6666.66;
+                account.transHist = "";
+                Insert(account);
+
+                account = new Account();
+                account.acctNo = "1234567";
+                account.acctName = "user7";
+                account.acctBal = 77777.77;
+                account.transHist = "";
+                Insert(account);
+
+                account = new Account();
+                account.acctNo = "123456888";
+                account.acctName = "user8";
+                account.acctBal = 888888.88;
+                account.transHist = "";
+                Insert(account);
+
+                account = new Account();
+                account.acctNo = "123456999";
+                account.acctName = "user9";
+                account.acctBal = 9999999.99;
+                account.transHist = "";
+                Insert(account);
+
+                account = new Account();
+                account.acctNo = "123456000";
+                account.acctName = "user0";
+                account.acctBal = 0.00;
+                account.transHist = "";
                 Insert(account);
             }
         }

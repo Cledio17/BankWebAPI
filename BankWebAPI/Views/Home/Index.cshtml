@@ -21,11 +21,15 @@
                             imgElement.src = data.pfp; 
                             imgElement.alt = 'Profile Picture';
                             imgElement.style.width = '100px';
-                            document.getElementById('profilePicture').appendChild(imgElement);
+                            var profilePictureElement = document.getElementById('profilePicture');
+                            while (profilePictureElement.firstChild) {
+                                profilePictureElement.removeChild(profilePictureElement.firstChild);
+                            }
+                            profilePictureElement.appendChild(imgElement);
                         }
                     })
                     .catch(error => {
-                        document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                        document.getElementById('result').innerHTML = 'Error: User ID not found';
                     });
             }
         }
@@ -44,7 +48,7 @@
                         document.getElementById('result').innerHTML = message;
                     })
                     .catch(error => {
-                        document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                        document.getElementById('result').innerHTML = 'Error: Username not found';
                     });
             }
         }
@@ -63,7 +67,7 @@
                         document.getElementById('result').innerHTML = message;
                     })
                     .catch(error => {
-                        document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                        document.getElementById('result').innerHTML = 'Error: Email not found';
                     });
             }
         }
@@ -96,7 +100,7 @@
                     document.getElementById('result').innerHTML = message;
                 })
                 .catch(error => {
-                    document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                    document.getElementById('result').innerHTML = 'Error: New user information not complete';
                 });
         }
 
@@ -136,7 +140,7 @@
                         document.getElementById('result').innerHTML = message;
                     })
                     .catch(error => {
-                        document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                        document.getElementById('result').innerHTML = 'Error: update user information failed';
                     });
             }
         }
@@ -155,7 +159,7 @@
                         document.getElementById('result').innerHTML = JSON.stringify(data);
                     })
                     .catch(error => {
-                        document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                        document.getElementById('result').innerHTML = 'Error: Account ID not found';
                     });
             }
         }
@@ -174,7 +178,7 @@
                         document.getElementById('result').innerHTML = message;
                     })
                     .catch(error => {
-                        document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                        document.getElementById('result').innerHTML = 'Error: Account ID not found';
                     });
             }
         }
@@ -183,7 +187,8 @@
             var account = {
                 acctNo: prompt("Enter Account Number:"),
                 acctBal: prompt("Enter Balance:"),
-                acctName: prompt("Enter Holder Name:")
+                acctName: prompt("Enter Holder Name:"),
+                transHist: ""
             };
 
             fetch('/api/Account', {
@@ -195,7 +200,7 @@
             })
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        throw new Error(response.text());
                     }
                     return response.text();
                 })
@@ -203,7 +208,7 @@
                     document.getElementById('result').innerHTML = message;
                 })
                 .catch(error => {
-                    document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                    document.getElementById('result').innerHTML = 'Error: Account creation failed';
                 });
         }
 
@@ -236,35 +241,15 @@
                     document.getElementById('result').innerHTML = message;
                 })
                 .catch(error => {
-                    document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                    document.getElementById('result').innerHTML = 'Error: Update account information failed';
                 });
         }
 
-        function getTransactionById() {
-            var transactionId = prompt("Enter Transaction ID:");
-            if (transactionId !== null) {
-                fetch(`/api/Transaction/${transactionId}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok. Some errors have occured.');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        document.getElementById('result').innerHTML = JSON.stringify(data);
-                    })
-                    .catch(error => {
-                        document.getElementById('result').innerHTML = 'Error: ' + error.message;
-                    });
-            }
-        }
-
-        function createTransaction() {
+        function deposit() {
             var transaction = {
-                transId: '12345',
-                fromId: prompt("Enter Source Account ID:"),
-                toId: prompt("Enter Destination Account ID:"),
-                bal: prompt("Enter Amount:")
+                acctNo: prompt("Enter Account Number:"),
+                operation: "1",
+                amount: prompt("Enter Amount:")
             };
 
             fetch('/api/Transaction', {
@@ -284,7 +269,35 @@
                     document.getElementById('result').innerHTML = message;
                 })
                 .catch(error => {
-                    document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                    document.getElementById('result').innerHTML = 'Error: Account number not found';
+                });
+        }
+
+        function withdrawal() {
+            var transaction = {
+                acctNo: prompt("Enter Account Number:"),
+                operation: "2",
+                amount: prompt("Enter Amount:")
+            };
+
+            fetch('/api/Transaction', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(transaction)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok. Some errors have occured.');
+                    }
+                    return response.text();
+                })
+                .then(message => {
+                    document.getElementById('result').innerHTML = message;
+                })
+                .catch(error => {
+                    document.getElementById('result').innerHTML = 'Error: Account number not found';
                 });
         }
     </script>
@@ -306,8 +319,9 @@
     <button onclick="updateAccount()">Update Account</button>
 
     <h2>Transaction Controller</h2>
-    <button onclick="getTransactionById()">Get Transaction by ID</button>
-    <button onclick="createTransaction()">Create Transaction</button>
+    <button onclick="deposit()">Deposit</button>
+    <button onclick="withdrawal()">Withdrawal</button>
+    
 
     <h4>Result:</h4>
     <div id="profilePicture"></div>

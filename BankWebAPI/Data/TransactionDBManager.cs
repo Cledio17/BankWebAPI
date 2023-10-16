@@ -21,10 +21,9 @@ namespace BankWebAPI.Data
                         // SQL command to create a table named "AccountTable"
                         command.CommandText = @"
                     CREATE TABLE TransactionTable (
-                        TransactionId TEXT,
-                        FromId TEXT,
-                        ToId TEXT,
-                        Balance REAL
+                        ID TEXT,
+                        Operation INT,
+                        Amount REAL
                     )";
 
                         // Execute the SQL command to create the table
@@ -90,22 +89,23 @@ namespace BankWebAPI.Data
 
                     using (SQLiteCommand countCommand = connection.CreateCommand())
                     {
-                        countCommand.CommandText = "SELECT COUNT(*) FROM TransactionTable";
-                        int transactionCount = Convert.ToInt32(countCommand.ExecuteScalar());
                         using (SQLiteCommand insertCommand = connection.CreateCommand())
                         {
-                            insertCommand.CommandText = @"INSERT INTO TransactionTable (TransactionId, FromId, ToId, Balance) VALUES (@TransactionId, @FromId, @ToId, @Balance)";
+                            insertCommand.CommandText = @"INSERT INTO TransactionTable (ID, Operation, Amount) VALUES (@ID, @Operation, @Amount)";
 
-                            insertCommand.Parameters.AddWithValue("@TransactionId", transactionCount + 1); // Use transactionCount + 1 as the new TransactionId
-                            insertCommand.Parameters.AddWithValue("@FromId", transaction.fromId);
-                            insertCommand.Parameters.AddWithValue("@ToId", transaction.toId);
-                            insertCommand.Parameters.AddWithValue("@Balance", transaction.bal);
+                            insertCommand.Parameters.AddWithValue("@ID", transaction.acctNo);
+                            insertCommand.Parameters.AddWithValue("@Operation", transaction.operation);
+                            insertCommand.Parameters.AddWithValue("@Amount", transaction.amount);
 
                             int rowsInserted = insertCommand.ExecuteNonQuery();
 
                             if (rowsInserted > 0)
                             {
                                 connection.Close();
+                                if (transaction.operation == 1) //Deposit
+                                {
+                                    Console.Write("Deposit of $" + transaction.amount + " into " + transaction.acctNo + " is Successful\n");
+                                }
                                 return true; // Insertion was successful
                             }
                         }
@@ -122,7 +122,7 @@ namespace BankWebAPI.Data
         }
 
 
-        public static bool Update(Transaction transaction, Account acc, Account acc2)
+        public static bool Update(Transaction transaction, Account acc)
         {
             try
             {
@@ -131,28 +131,71 @@ namespace BankWebAPI.Data
                 {
                     connection.Open();
 
-                    // Create a new SQLite command to execute SQL
-                    using (SQLiteCommand command = connection.CreateCommand())
+                    using (SQLiteCommand histCommand = connection.CreateCommand())
                     {
-                        UpdateTo(transaction, acc2);
-                        // Build the SQL command to update data by ID
-                        command.CommandText = $"UPDATE AccountTable SET Balance = @Balance WHERE ID = @ID";
-                        command.Parameters.AddWithValue("@ID", transaction.fromId);
-                        double deductamount = acc.acctBal - transaction.bal;
-                        command.Parameters.AddWithValue("@Balance", deductamount);
-
-                        // Execute the SQL command to update data
-                        int rowsUpdated = command.ExecuteNonQuery();
-                        connection.Close();
-                        // Check if any rows were updated
-                        if (rowsUpdated > 0)
+                        histCommand.CommandText = $"SELECT TransHist FROM AccountTable WHERE ID = @ID";
+                        histCommand.Parameters.AddWithValue("@ID", transaction.acctNo);
+                        string newHist = Convert.ToString(histCommand.ExecuteScalar());
+                        // Create a new SQLite command to execute SQL
+                        using (SQLiteCommand countCommand = connection.CreateCommand())
                         {
-                            return true; // Update was successful
+                            countCommand.CommandText = $"SELECT Balance FROM AccountTable WHERE ID = @ID";
+                            countCommand.Parameters.AddWithValue("@ID", transaction.acctNo);
+                            double newBalance = Convert.ToDouble(countCommand.ExecuteScalar());
+                            using (SQLiteCommand command = connection.CreateCommand())
+                            {
+                                if (transaction.operation == 1)//Deposit
+                                {
+                                    // Build the SQL command to update data by ID
+                                    newBalance = newBalance + transaction.amount;
+                                    command.CommandText = $"UPDATE AccountTable SET Balance = @Balance WHERE ID = @ID";
+                                    command.Parameters.AddWithValue("@ID", transaction.acctNo);
+                                    command.Parameters.AddWithValue("@Balance", newBalance);
+                                    acc.acctBal = newBalance;
+                                    command.ExecuteNonQuery();
+                                    newHist = newHist + "Deposit $" + transaction.amount;
+                                    command.CommandText = $"UPDATE AccountTable SET TransHist = @TransHist WHERE ID = @ID";
+                                    command.Parameters.AddWithValue("@ID", transaction.acctNo);
+                                    command.Parameters.AddWithValue("@TransHist", newHist);
+                                    acc.transHist = newHist;
+                                    // Execute the SQL command to update data
+                                    int rowsUpdated = command.ExecuteNonQuery();
+                                    connection.Close();
+                                    // Check if any rows were updated
+                                    if (rowsUpdated > 0)
+                                    {
+                                        return true; // Update was successful
+                                    }
+                                }
+                                else if (transaction.operation == 2) //Withdrawal
+                                {
+                                    // Build the SQL command to update data by ID
+                                    newBalance = newBalance - transaction.amount;
+                                    command.CommandText = $"UPDATE AccountTable SET Balance = @Balance WHERE ID = @ID";
+                                    command.Parameters.AddWithValue("@ID", transaction.acctNo);
+                                    command.Parameters.AddWithValue("@Balance", newBalance);
+                                    acc.acctBal = newBalance;
+                                    command.ExecuteNonQuery();
+                                    newHist = newHist + "Withdraw $" + transaction.amount;
+                                    command.CommandText = $"UPDATE AccountTable SET TransHist = @TransHist WHERE ID = @ID";
+                                    command.Parameters.AddWithValue("@ID", transaction.acctNo);
+                                    command.Parameters.AddWithValue("@TransHist", newHist);
+                                    acc.transHist = newHist;
+                                    // Execute the SQL command to update data
+                                    int rowsUpdated = command.ExecuteNonQuery();
+                                    connection.Close();
+                                    // Check if any rows were updated
+                                    if (rowsUpdated > 0)
+                                    {
+                                        return true; // Update was successful
+                                    }
+                                }
+                            }
+
                         }
                     }
                     connection.Close();
                 }
-
                 return false; // No rows were updated
             }
             catch (Exception ex)
@@ -162,46 +205,7 @@ namespace BankWebAPI.Data
             }
         }
 
-        public static bool UpdateTo(Transaction transaction,Account acc2)
-        {
-            try
-            {
-                // Create a new SQLite connection
-                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
-                {
-                    connection.Open();
-
-                    // Create a new SQLite command to execute SQL
-                    using (SQLiteCommand command = connection.CreateCommand())
-                    {
-                        // Build the SQL command to update data by ID
-                        command.CommandText = $"UPDATE AccountTable SET Balance = @Balance WHERE ID = @ID";
-                        command.Parameters.AddWithValue("@ID", transaction.toId);
-                        double depositamount = acc2.acctBal + transaction.bal;
-                        command.Parameters.AddWithValue("@Balance", depositamount);
-
-                        // Execute the SQL command to update data
-                        int rowsUpdated = command.ExecuteNonQuery();
-                        connection.Close();
-                        // Check if any rows were updated
-                        if (rowsUpdated > 0)
-                        {
-                            return true; // Update was successful
-                        }
-                    }
-                    connection.Close();
-                }
-
-                return false; // No rows were updated
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-                return false; // Update failed
-            }
-        }
-
-        public static Transaction GetById(string id)
+        /*public static Transaction GetById(string id)
         {
             Transaction transaction = null;
 
@@ -241,6 +245,103 @@ namespace BankWebAPI.Data
             }
 
             return transaction;
+        }*/
+
+        public static void DBInitialize()
+        {
+            if (CreateTable())
+            {
+                Transaction transaction = new Transaction();
+                transaction.acctNo = "123456789";
+                transaction.operation = 1;
+                transaction.amount = 200;
+                Account account = AccountDBManager.GetById(transaction.acctNo);
+                if (account != null)
+                {
+                    if (Insert(transaction))
+                    {
+                        Update(transaction, account);
+                    }
+                }
+
+                transaction = new Transaction();
+                transaction.acctNo = "123456788";
+                transaction.operation = 2;
+                transaction.amount = 100;
+                account = AccountDBManager.GetById(transaction.acctNo);
+                if (account != null)
+                {
+                    if (Insert(transaction))
+                    {
+                        Update(transaction, account);
+                    }
+                }
+
+                transaction = new Transaction();
+                transaction.acctNo = "123456787";
+                transaction.operation = 1;
+                transaction.amount = 300;
+                account = AccountDBManager.GetById(transaction.acctNo);
+                if (account != null)
+                {
+                    if (Insert(transaction))
+                    {
+                        Update(transaction, account);
+                    }
+                }
+
+                transaction = new Transaction();
+                transaction.acctNo = "123456444";
+                transaction.operation = 2;
+                transaction.amount = 444;
+                account = AccountDBManager.GetById(transaction.acctNo);
+                if (account != null)
+                {
+                    if (Insert(transaction))
+                    {
+                        Update(transaction, account);
+                    }
+                }
+
+                transaction = new Transaction();
+                transaction.acctNo = "123456555";
+                transaction.operation = 1;
+                transaction.amount = 555;
+                account = AccountDBManager.GetById(transaction.acctNo);
+                if (account != null)
+                {
+                    if (Insert(transaction))
+                    {
+                        Update(transaction, account);
+                    }
+                }
+
+                transaction = new Transaction();
+                transaction.acctNo = "123456666";
+                transaction.operation = 2;
+                transaction.amount = 666;
+                account = AccountDBManager.GetById(transaction.acctNo);
+                if (account != null)
+                {
+                    if (Insert(transaction))
+                    {
+                        Update(transaction, account);
+                    }
+                }
+
+                transaction = new Transaction();
+                transaction.acctNo = "123456777";
+                transaction.operation = 1;
+                transaction.amount = 777;
+                account = AccountDBManager.GetById(transaction.acctNo);
+                if (account != null)
+                {
+                    if (Insert(transaction))
+                    {
+                        Update(transaction, account);
+                    }
+                }
+            }
         }
     }
 }
