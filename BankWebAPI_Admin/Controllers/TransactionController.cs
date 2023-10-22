@@ -36,5 +36,28 @@ namespace BankWebAPI_Admin.Controllers
             }
             return Ok(transaction);
         }
+        [HttpGet]
+        [Route("getbyfromid/{id}")]
+        public IActionResult GetByFromId(string id)
+        {
+            List<Transaction> transactions = TransactionDBManager.GetByFromId(id);
+            if (transactions == null)
+            {
+                return NotFound();
+            }
+            return Ok(transactions);
+        }
+        [HttpGet("getall")]
+        public IActionResult GetAllTransactions()
+        {
+            List<Transaction> transactions = TransactionDBManager.GetAllTransactions();
+
+            if (transactions == null || transactions.Count == 0)
+            {
+                return NotFound("No transactions found.");
+            }
+
+            return Ok(transactions);
+        }
     }
 }

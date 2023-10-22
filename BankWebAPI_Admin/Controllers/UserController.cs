@@ -36,12 +36,23 @@ namespace BankWebAPI_Admin.Controllers
         [HttpGet("get/{id}")]
         public IActionResult Get(string id)
         {
-            User user = UserDBManager.GetById(id);
+            User user = UserDBManager.GetByAccNo(id);
             if (user == null)
             {
                 return NotFound();
             }
             return new ObjectResult(user) { StatusCode = 200};
+        }
+
+        [HttpGet("getall")]
+        public IActionResult GetAll()
+        {
+            List<User> userList = UserDBManager.GetAllUsers();
+            if (userList == null || userList.Count == 0)
+            {
+                return NotFound();
+            }
+            return new ObjectResult(userList) { StatusCode = 200 };
         }
 
         [HttpGet("deleteByName/{id}")]
@@ -64,10 +75,10 @@ namespace BankWebAPI_Admin.Controllers
             return BadRequest("Could not delete");
         }
 
-        [HttpPut]
-        public IActionResult Update(User user)
+        [HttpPut("update/{id}")]
+        public IActionResult Update(string id, [FromBody] User user)
         {
-            if (UserDBManager.Update(user))
+            if (UserDBManager.Update(id, user.Password, user.Email, user.PhoneNumber))
             {
                 return Ok("Successfully updated");
             }

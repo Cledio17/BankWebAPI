@@ -258,6 +258,51 @@ namespace BankWebAPI_Admin.Data
             return transactions;
         }
 
+        public static List<Transaction> GetAllTransactions()
+        {
+            List<Transaction> transactions = new List<Transaction>();
+
+            try
+            {
+                // Create a new SQLite connection
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+                {
+                    connection.Open();
+
+                    // Create a new SQLite command to execute SQL
+                    using (SQLiteCommand command = connection.CreateCommand())
+                    {
+                        // Build the SQL command to select all transactions
+                        command.CommandText = "SELECT * FROM TransactionTable";
+
+                        // Execute the SQL command and retrieve data
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Transaction transaction = new Transaction();
+                                transaction.transId = reader["TransactionId"].ToString();
+                                transaction.fromId = reader["FromId"].ToString();
+                                transaction.toId = reader["ToId"].ToString();
+                                transaction.bal = Convert.ToDouble(reader["Balance"]);
+                                transaction.transactionDate = Convert.ToDateTime(reader["TransactionDate"]);
+                                transaction.description = reader["Description"].ToString();
+                                transactions.Add(transaction);
+                            }
+                        }
+                    }
+                    connection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+
+            return transactions;
+        }
+
+
 
         public static void DBInitialize()
         {

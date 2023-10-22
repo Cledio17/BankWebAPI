@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using BankWebAPI_Admin.Models;
+using BankWebAPI_Admin.Data;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,11 +19,13 @@ namespace BankWebAPI_Admin.Controllers
             if (Request.Cookies.ContainsKey("SessionID"))
             {
                 var cookieValue = Request.Cookies["SessionID"];
-                if (cookieValue == "1234567")
+                User user = UserDBManager.GetByAccNo(cookieValue);
+                if (cookieValue == user.acctNo)
                 {
                     return PartialView("LoginViewAuthenticated");
                 }
-               
+
+
             }
             // Return the partial view as HTML
             return PartialView("LoginDefaultView");
@@ -31,14 +34,11 @@ namespace BankWebAPI_Admin.Controllers
         [HttpGet("authview")]
         public IActionResult GetLoginAuthenticatedView()
         {
-            if (Request.Cookies.ContainsKey("SessionID"))
+            var cookieValue = Request.Cookies["SessionID"];
+            User user = UserDBManager.GetByAccNo(cookieValue);
+            if (cookieValue == user.acctNo)
             {
-                var cookieValue = Request.Cookies["SessionID"];
-                if (cookieValue == "1234567")
-                {
-                    return PartialView("LoginViewAuthenticated");
-                }
-
+                return PartialView("LoginViewAuthenticated");
             }
             // Return the partial view as HTML
             return PartialView("LoginErrorView");
@@ -54,16 +54,16 @@ namespace BankWebAPI_Admin.Controllers
         public IActionResult Authenticate([FromBody] User user)
         {
             // Return the partial view as HTML
-            var response = new { login = false};
-            
+            var response = new { login = false };
+            User user1 = UserDBManager.GetById(user.UserName);
 
-            if (user!=null && user.UserName.Equals("sajib") && user.Password.Equals("mistry"))
+            if (user != null && user1 != null && user.UserName.Equals("admin") && user.Password.Equals("admin123"))
             {
-                Response.Cookies.Append("SessionID", "1234567");
+                Response.Cookies.Append("SessionID", user1.acctNo);
                 response = new { login = true };
             }
             return Json(response);
-            
+
         }
 
     }
