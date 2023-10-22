@@ -10,6 +10,5 @@ namespace BankWebAPI.Models
         public string PhoneNumber { get; set; }
         public string Address { get; set; }
         public string pfp { get; set; }
-        public string acctNo { get; set; }
     }
 }

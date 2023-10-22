@@ -23,7 +23,8 @@ namespace BankWebAPI.Data
                     CREATE TABLE TransactionTable (
                         ID TEXT,
                         Operation INT,
-                        Amount REAL
+                        Amount REAL,
+                        FOREIGN KEY (ID) REFERENCES AccountTable (ID)
                     )";
 
                         // Execute the SQL command to create the table
@@ -105,6 +106,10 @@ namespace BankWebAPI.Data
                                 if (transaction.operation == 1) //Deposit
                                 {
                                     Console.Write("Deposit of $" + transaction.amount + " into " + transaction.acctNo + " is Successful\n");
+                                }
+                                else if (transaction.operation == 2) //Withdrawal
+                                {
+                                    Console.Write("Withdrawal of $" + transaction.amount + " from " + transaction.acctNo + " is Successful\n");
                                 }
                                 return true; // Insertion was successful
                             }

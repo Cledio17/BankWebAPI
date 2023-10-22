@@ -25,9 +25,8 @@ namespace BankWebAPI.Data
                         Password TEXT,
                         Email TEXT,
                         PhoneNumber TEXT,
-                        Address TEXT, 
-                        Pfp TEXT,   
-                        ID TEXT
+                        Address TEXT,
+                        Pfp TEXT
                     )";
 
                         // Execute the SQL command to create the table
@@ -57,7 +56,7 @@ namespace BankWebAPI.Data
 
                     using (SQLiteCommand command = connection.CreateCommand())
                     {
-                        command.CommandText = @"INSERT INTO UserTable (Username, Password, Email, PhoneNumber, Address, Pfp, ID) VALUES (@Username, @Password, @Email, @PhoneNumber, @Address, @Pfp, @ID)";
+                        command.CommandText = @"INSERT INTO UserTable (Username, Password, Email, PhoneNumber, Address, Pfp) VALUES (@Username, @Password, @Email, @PhoneNumber, @Address, @Pfp)";
 
                         command.Parameters.AddWithValue("@Username", user.UserName);
                         command.Parameters.AddWithValue("@Password", user.Password);
@@ -65,7 +64,6 @@ namespace BankWebAPI.Data
                         command.Parameters.AddWithValue("@PhoneNumber", user.PhoneNumber);
                         command.Parameters.AddWithValue("@Address", user.Address);
                         command.Parameters.AddWithValue("@Pfp", user.pfp);
-                        command.Parameters.AddWithValue("@ID", user.acctNo);
 
                         int rowsInserted = command.ExecuteNonQuery();
 
@@ -78,7 +76,6 @@ namespace BankWebAPI.Data
                             Console.WriteLine("PhoneNumber: " + user.PhoneNumber);
                             Console.WriteLine("Address: " + user.Address);
                             Console.WriteLine("Pfp: " + user.pfp);
-                            Console.WriteLine("Account number: " + user.acctNo + "\n");
                             return true; // Insertion was successful
                         }
                     }
@@ -169,7 +166,7 @@ namespace BankWebAPI.Data
             }
         }
 
-        public static bool Update(String id, String password, String email, String phoneNumber, string address, string pfp)
+        public static bool Update(String username, String password, String email, String phoneNumber, string address, string pfp)
         {
             try
             {
@@ -183,7 +180,7 @@ namespace BankWebAPI.Data
                     {
                         // Build the SQL command to update data by ID
                         command.CommandText = $"UPDATE UserTable SET Password = @Password, Email = @Email, PhoneNumber = @PhoneNumber, Address = @Address, Pfp = @Pfp WHERE Username = @Username";
-                        command.Parameters.AddWithValue("@Username", id);
+                        command.Parameters.AddWithValue("@Username", username);
                         command.Parameters.AddWithValue("@Password", password);
                         command.Parameters.AddWithValue("@Email", email);
                         command.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
@@ -241,7 +238,6 @@ namespace BankWebAPI.Data
                                 user.PhoneNumber = reader["PhoneNumber"].ToString();
                                 user.Address = reader["Address"].ToString();
                                 user.pfp = reader["Pfp"].ToString();
-                                user.acctNo = reader["ID"].ToString();
                             }
                         }
                     }
@@ -267,7 +263,6 @@ namespace BankWebAPI.Data
                 user.PhoneNumber = "0123456789";
                 user.Address = "Lakeside 01";
                 user.pfp = "/image/img1.png";
-                user.acctNo = "123456789";
                 Insert(user);
 
                 user = new User();
@@ -277,7 +272,6 @@ namespace BankWebAPI.Data
                 user.PhoneNumber = "0123456788";
                 user.Address = "Lakeside 02";
                 user.pfp = "/image/img2.jpg";
-                user.acctNo = "123456788";
                 Insert(user);
 
                 user = new User();
@@ -287,7 +281,6 @@ namespace BankWebAPI.Data
                 user.PhoneNumber = "0123456787";
                 user.Address = "Lakeside 03";
                 user.pfp = "/image/img3.jpg";
-                user.acctNo = "123456787";
                 Insert(user);
 
                 user = new User();
@@ -297,7 +290,6 @@ namespace BankWebAPI.Data
                 user.PhoneNumber = "0123456444";
                 user.Address = "Lakeside 04";
                 user.pfp = "/image/img1.png";
-                user.acctNo = "123456444";
                 Insert(user);
 
                 user = new User();
@@ -307,7 +299,6 @@ namespace BankWebAPI.Data
                 user.PhoneNumber = "0123456555";
                 user.Address = "Lakeside 05";
                 user.pfp = "/image/img2.jpg";
-                user.acctNo = "123456555";
                 Insert(user);
 
                 user = new User();
@@ -317,7 +308,6 @@ namespace BankWebAPI.Data
                 user.PhoneNumber = "0123456666";
                 user.Address = "Lakeside 06";
                 user.pfp = "/image/img3.jpg";
-                user.acctNo = "123456666";
                 Insert(user);
 
                 user = new User();
@@ -327,7 +317,6 @@ namespace BankWebAPI.Data
                 user.PhoneNumber = "0123456777";
                 user.Address = "Lakeside 07";
                 user.pfp = "/image/img1.jpg";
-                user.acctNo = "123456777";
                 Insert(user);
 
                 user = new User();
@@ -337,7 +326,6 @@ namespace BankWebAPI.Data
                 user.PhoneNumber = "0123456888";
                 user.Address = "Lakeside 08";
                 user.pfp = "/image/img2.jpg";
-                user.acctNo = "123456888";
                 Insert(user);
 
                 user = new User();
@@ -347,7 +335,6 @@ namespace BankWebAPI.Data
                 user.PhoneNumber = "0123456999";
                 user.Address = "Lakeside 09";
                 user.pfp = "/image/img3.jpg";
-                user.acctNo = "123456999";
                 Insert(user);
 
                 user = new User();
@@ -357,7 +344,6 @@ namespace BankWebAPI.Data
                 user.PhoneNumber = "0123456000";
                 user.Address = "Lakeside 00";
                 user.pfp = "/image/img1.jpg";
-                user.acctNo = "123456000";
                 Insert(user);
             }
         }

@@ -23,9 +23,10 @@ namespace BankWebAPI.Data
                         command.CommandText = @"
                     CREATE TABLE AccountTable (
                         ID TEXT PRIMARY KEY,
-                        Name TEXT,
+                        Username TEXT,
                         Balance REAL,
-                        TransHist TEXT
+                        TransHist TEXT,
+                        FOREIGN KEY (Username) REFERENCES UserTable (Username)
                     )";
 
                         // Execute the SQL command to create the table
@@ -58,10 +59,10 @@ namespace BankWebAPI.Data
 
                         using (SQLiteCommand command = connection.CreateCommand())
                         {
-                            command.CommandText = @"INSERT INTO AccountTable (ID, Name, Balance, TransHist) VALUES (@ID, @Name, @Balance, @TransHist)";
+                            command.CommandText = @"INSERT INTO AccountTable (ID, Username, Balance, TransHist) VALUES (@ID, @Username, @Balance, @TransHist)";
 
                             command.Parameters.AddWithValue("@ID", account.acctNo);
-                            command.Parameters.AddWithValue("@Name", account.acctName);
+                            command.Parameters.AddWithValue("@Username", account.acctName);
                             command.Parameters.AddWithValue("@Balance", account.acctBal);
                             command.Parameters.AddWithValue("@TransHist", account.transHist);
 
@@ -72,8 +73,8 @@ namespace BankWebAPI.Data
                             {
                                 Console.WriteLine("Successfully created bank account: ");
                                 Console.WriteLine("Account number: " + account.acctNo);
-                                Console.WriteLine("Account name: " + account.acctName);
-                                Console.WriteLine("Tranfer amount: " + account.acctBal + "\n");
+                                Console.WriteLine("Username: " + account.acctName);
+                                Console.WriteLine("Balance: " + account.acctBal + "\n");
                                 return true; //Creation was successful
                             }
                         }
@@ -144,8 +145,8 @@ namespace BankWebAPI.Data
                     using (SQLiteCommand command = connection.CreateCommand())
                     {
                         // Build the SQL command to update data by ID
-                        command.CommandText = $"UPDATE AccountTable SET Name = @Name, Balance = @Balance WHERE ID = @ID";
-                        command.Parameters.AddWithValue("@Name", acctName);
+                        command.CommandText = $"UPDATE AccountTable SET Username = @Username, Balance = @Balance WHERE ID = @ID";
+                        command.Parameters.AddWithValue("@Username", acctName);
                         command.Parameters.AddWithValue("@Balance", acctBal);
                         command.Parameters.AddWithValue("@ID", id);
 
@@ -195,7 +196,7 @@ namespace BankWebAPI.Data
                             {
                                 account = new Account();
                                 account.acctNo = reader["ID"].ToString();
-                                account.acctName = reader["Name"].ToString();
+                                account.acctName = reader["Username"].ToString();
                                 account.acctBal = Convert.ToDouble(reader["Balance"]);
                                 account.transHist = reader["TransHist"].ToString();
                             }

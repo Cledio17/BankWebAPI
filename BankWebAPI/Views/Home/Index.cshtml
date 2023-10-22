@@ -14,7 +14,28 @@
                         return response.json();
                     })
                     .then(data => {
-                        document.getElementById('result').innerHTML = JSON.stringify(data);
+                        var resultElement = document.getElementById('result');
+                        resultElement.innerHTML = '';
+
+                        var usernameElement = document.createElement('div');
+                        usernameElement.textContent = 'Username: ' + data.userName;
+                        resultElement.appendChild(usernameElement);
+
+                        var passwordElement = document.createElement('div');
+                        passwordElement.textContent = 'Password: ' + data.password;
+                        resultElement.appendChild(passwordElement);
+
+                        var emailElement = document.createElement('div');
+                        emailElement.textContent = 'Email: ' + data.email;
+                        resultElement.appendChild(emailElement);
+
+                        var phoneNumberElement = document.createElement('div');
+                        phoneNumberElement.textContent = 'Phone Number: ' + data.phoneNumber;
+                        resultElement.appendChild(phoneNumberElement);
+
+                        var addressElement = document.createElement('div');
+                        addressElement.textContent = 'Address: ' + data.address;
+                        resultElement.appendChild(addressElement);
 
                         if (data.pfp) {
                             var imgElement = document.createElement('img');
@@ -79,8 +100,7 @@
                 Email: prompt("Enter Email:"),
                 PhoneNumber: prompt("Enter Phone Number:"),
                 Address: prompt("Enter Address:"),
-                pfp: prompt("Enter Pfp URL:"),
-                acctNo: prompt("Enter Account Number:")
+                pfp: prompt("Enter Pfp URL:")
             };
 
             fetch('/api/User', {
@@ -119,8 +139,7 @@
                     Email: email,
                     PhoneNumber: phoneNumber,
                     Address: address,
-                    pfp: pfp,
-                    acctNo: prompt("Enter Account Number:")
+                    pfp: pfp
                 };
 
                 fetch(`/api/User/update/${username}`, {
@@ -156,7 +175,20 @@
                         return response.json();
                     })
                     .then(data => {
-                        document.getElementById('result').innerHTML = JSON.stringify(data);
+                        var resultElement = document.getElementById('result');
+                        resultElement.innerHTML = '';
+
+                        var acctNoElement = document.createElement('div');
+                        acctNoElement.textContent = 'Account Number: ' + data.acctNo;
+                        resultElement.appendChild(acctNoElement);
+
+                        var acctHolderElement = document.createElement('div');
+                        acctHolderElement.textContent = 'Holder Name: ' + data.acctName;
+                        resultElement.appendChild(acctHolderElement);
+
+                        var acctBalElement = document.createElement('div');
+                        acctBalElement.textContent = 'Balance: ' + data.acctBal;
+                        resultElement.appendChild(acctBalElement);
                     })
                     .catch(error => {
                         document.getElementById('result').innerHTML = 'Error: Account ID not found';

@@ -50,9 +50,9 @@ namespace BankWebAPI.Controllers
         }
 
         [HttpPut("update/{id}")]
-        public IActionResult Update(string id, [FromBody] User user)
+        public IActionResult Update(string username, [FromBody] User user)
         {
-            if (UserDBManager.Update(id, user.Password, user.Email, user.PhoneNumber, user.Address, user.pfp))
+            if (UserDBManager.Update(username, user.Password, user.Email, user.PhoneNumber, user.Address, user.pfp))
             {
                 return Ok("Successfully updated");
             }
